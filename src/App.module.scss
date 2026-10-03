@@ -1,0 +1,24 @@
+@use "./styles/tokens" as *;
+
+.bootstrapScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-primary;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid $outline;
+  border-top-color: $accent-primary;
+  animation: appBootstrapSpin 0.8s linear infinite;
+}
+
+@keyframes appBootstrapSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

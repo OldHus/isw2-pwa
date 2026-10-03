@@ -1,0 +1,122 @@
+@use "../../../styles/tokens" as *;
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.errorText {
+  color: $danger;
+  padding: 24px;
+  text-align: center;
+}
+
+.votingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.question {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.closesAt {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.remaining {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $accent-primary;
+  margin: 0;
+}
+
+.closedNotice {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $danger;
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.optionButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid $outline;
+  background: $bg-primary;
+  color: $text-primary;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.85;
+  }
+
+  &:not(:disabled):hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.optionButtonSelected {
+  background: $primary-container;
+  border-color: $accent-primary;
+  color: $on-primary-container;
+}
+
+.optionTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.voterNames {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+}

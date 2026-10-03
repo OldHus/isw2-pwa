@@ -1,0 +1,570 @@
+@use "../../../styles/tokens" as *;
+
+
+.wrapper {
+  position: relative;
+  min-height: 240px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.errorText {
+  color: $danger;
+  padding: 24px;
+  text-align: center;
+}
+
+
+.standingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.standingHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.standingHeading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.standingTitle {
+  font-family: $font-display;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.standingCount {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.standingEmpty {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.resetButton {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-family: $font-body;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid $danger;
+  background: transparent;
+  color: $danger;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $danger;
+    outline-offset: 2px;
+  }
+}
+
+.dangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: $danger;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $danger;
+    outline-offset: 2px;
+  }
+}
+
+
+.sessionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.question {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.activeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.remaining {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $accent-primary;
+}
+
+.closedNotice {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.leaderboardSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid $outline;
+}
+
+.leaderboardTitle {
+  font-family: $font-display;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.leaderboardEmpty {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.leaderboardList {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.leaderboardRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid $outline;
+}
+
+.leaderboardName {
+  font-size: 0.9375rem;
+  color: $text-primary;
+}
+
+.leaderboardNameWrong {
+  font-size: 0.9375rem;
+  color: $danger;
+}
+
+.leaderboardScore {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $text-secondary;
+  white-space: nowrap;
+}
+
+
+.bankSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bankTitle {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.bankList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bankCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 16px;
+}
+
+.bankQuestionText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.bankOptionList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bankOption {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+}
+
+.bankOptionCorrect {
+  font-size: 0.8125rem;
+  color: $accent-primary;
+  font-weight: 600;
+}
+
+.bankActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.launchButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: $font-body;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-secondary;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+
+.outlinedButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-primary;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid $outline;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: $scrim;
+  z-index: 30;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.dialogTitle {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.dialogHint {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.launchQuestionText {
+  font-size: 0.9375rem;
+  color: $text-primary;
+  margin: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-secondary;
+}
+
+.input {
+  font-family: $font-body;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid $outline;
+  background: $bg-primary;
+  color: $text-primary;
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 1px;
+  }
+}
+
+.optionsFields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.optionInput {
+  flex: 1;
+}
+
+.radio {
+  width: 18px;
+  height: 18px;
+  accent-color: $accent-primary;
+  flex-shrink: 0;
+}
+
+.removeOptionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-secondary;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.addOptionButton {
+  align-self: flex-start;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $accent-primary;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

@@ -1,0 +1,57 @@
+@use "../../styles/tokens" as *;
+
+.feed {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  min-width: 0;
+}
+
+.greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-family: "Space Grotesk", sans-serif;
+  color: $text-primary;
+  font-size: 30px;
+  margin: 0;
+}
+
+.context {
+  color: $text-secondary;
+  font-size: 15px;
+  margin: 0;
+}
+
+.courseError {
+  color: $danger;
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.primaryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.secondaryList {
+  display: flex;
+  flex-direction: column;
+  background: $bg-surface;
+  border: 1px solid $outline;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: $shadow-elevated;
+}

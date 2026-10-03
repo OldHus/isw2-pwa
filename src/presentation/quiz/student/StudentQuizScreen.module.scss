@@ -1,0 +1,167 @@
+@use "../../../styles/tokens" as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.myStanding {
+  align-self: flex-start;
+  font-family: $font-body;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: $primary-container;
+  color: $on-primary-container;
+  margin: 0;
+}
+
+.standingCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.standingHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.standingTitle {
+  font-family: $font-display;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.standingCount {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.errorText {
+  color: $danger;
+  padding: 24px;
+  text-align: center;
+}
+
+.questionCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.question {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.remaining {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $accent-primary;
+  margin: 0;
+}
+
+.statusNotice {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: $text-secondary;
+  margin: 0;
+}
+
+.optionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.optionButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid $outline;
+  background: $bg-primary;
+  color: $text-primary;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.85;
+  }
+
+  &:not(:disabled):hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.optionButtonSelected {
+  background: $primary-container;
+  border-color: $accent-primary;
+  color: $on-primary-container;
+}
+
+.optionButtonCorrect {
+  background: $primary-container;
+  border-color: $success;
+  color: $on-primary-container;
+}
+
+.optionButtonWrong {
+  background: $bg-surface;
+  border-color: $danger;
+  color: $danger;
+}
+
+.optionText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.resultText {
+  font-family: $font-display;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: $text-primary;
+  margin: 0;
+}

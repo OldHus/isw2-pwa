@@ -1,0 +1,124 @@
+@use "../../styles/tokens" as *;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.userBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $accent-primary;
+  color: $on-accent-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.avatarImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.userName {
+  color: $text-primary;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.userRole {
+  color: $text-secondary;
+  font-size: 12px;
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: $text-primary;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: $bg-surface-elevated;
+  }
+}
+
+.navItemActive {
+  background: $primary-container;
+  color: $on-primary-container;
+  font-weight: 600;
+
+  .navIcon {
+    color: $on-primary-container;
+  }
+
+  &:hover {
+    background: $primary-container;
+  }
+}
+
+.navIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.disabled {
+  color: $text-primary;
+  cursor: default;
+
+  .navIcon {
+    color: $text-secondary;
+  }
+}
+
+.signOutButton {
+  margin-top: auto;
+  background: none;
+  border: 1px solid $outline;
+  color: $text-secondary;
+  border-radius: 999px;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+
+  &:hover {
+    border-color: $danger;
+    color: $danger;
+  }
+}

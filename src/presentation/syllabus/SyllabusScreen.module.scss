@@ -1,0 +1,44 @@
+@use "../../styles/tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 20px 40px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: $font-display;
+  color: $text-primary;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: $text-secondary;
+  font-size: 14px;
+}
+
+.stateText,
+.stateTextError {
+  font-size: 14px;
+  text-align: center;
+  padding: 48px 16px;
+}
+
+.stateText {
+  color: $text-secondary;
+}
+
+.stateTextError {
+  color: $danger;
+}

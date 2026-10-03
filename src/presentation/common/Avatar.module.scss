@@ -1,0 +1,19 @@
+@use "../../styles/tokens" as *;
+
+.image {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.placeholder {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $primary-container;
+  color: $on-primary-container;
+  font-family: $font-display;
+  font-weight: 600;
+  flex-shrink: 0;
+}

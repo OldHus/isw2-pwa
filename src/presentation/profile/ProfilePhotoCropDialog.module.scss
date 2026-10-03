@@ -1,0 +1,135 @@
+@use "../../styles/tokens" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: $scrim;
+  z-index: 50;
+}
+
+.hiddenProbe {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.title {
+  align-self: flex-start;
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.hint {
+  align-self: flex-start;
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  margin: -8px 0 0;
+}
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  touch-action: none;
+}
+
+.image {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  cursor: grab;
+  transition: transform 0.05s linear;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.imageDragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.circleMask {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 9999px $scrim;
+  pointer-events: none;
+}
+
+.zoomSlider {
+  width: 100%;
+  accent-color: $accent-primary;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.cancelButton {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-primary;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.confirmButton {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}

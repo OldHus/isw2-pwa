@@ -1,0 +1,11 @@
+@use "../../../styles/tokens" as *;
+
+.link {
+  color: $accent-primary;
+  text-decoration: underline;
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}

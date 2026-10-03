@@ -1,0 +1,68 @@
+@use "../../styles/tokens" as *;
+
+.iconSlot {
+  position: relative;
+  display: inline-flex;
+}
+
+.badge {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: $danger;
+  box-shadow: 0 0 0 2px $bg-surface;
+}
+
+.badgePop {
+  animation: badge-pop 0.4s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes badge-pop {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.ring {
+  display: inline-block;
+  animation: bell-ring 0.7s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.resetButtonBase {
+  background: none;
+  border: none;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  font-family: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(9deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+
+.portalAnchor {
+  position: fixed;
+  z-index: 1000;
+  max-height: calc(100vh - 24px);
+}

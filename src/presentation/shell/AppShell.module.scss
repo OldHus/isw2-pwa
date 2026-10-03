@@ -1,0 +1,202 @@
+@use "../../styles/tokens" as *;
+
+.shell {
+  min-height: 100vh;
+  background: $bg-primary;
+  display: flex;
+  flex-direction: column;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: $bg-surface;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  @media (min-width: 960px) {
+    display: none;
+  }
+}
+
+.menuButton {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.menuIcon {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: $text-primary;
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 22px;
+    height: 2px;
+    background: $text-primary;
+  }
+
+  &::before { top: -7px; }
+  &::after { top: 7px; }
+}
+
+.brand {
+  font-family: "Space Grotesk", sans-serif;
+  color: $text-primary;
+  font-size: 15px;
+}
+
+.sidebar {
+  display: none;
+
+  @media (min-width: 960px) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: $bg-surface;
+    padding: 24px 16px;
+    overflow-y: auto;
+    transform: translateX(0);
+    transition: transform 0.25s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+.sidebarCollapsed {
+  @media (min-width: 960px) {
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.collapseButton,
+.expandButton {
+  display: none;
+
+  @media (min-width: 960px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+}
+
+.collapseButton {
+  @media (min-width: 960px) {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: $text-secondary;
+
+    &:hover {
+      background: $bg-primary;
+      color: $text-primary;
+    }
+  }
+}
+
+.expandButton {
+  @media (min-width: 960px) {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 500px;
+    border: 1px solid $outline;
+    background: $bg-surface-elevated;
+    color: $text-primary;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 15;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+
+  @media (min-width: 960px) {
+    display: none;
+  }
+}
+
+.drawer {
+  width: 280px;
+  height: 100%;
+  background: $bg-surface;
+  padding: 24px 16px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: $text-primary;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  padding: 24px 16px 48px;
+  background: $bg-primary;
+  transition: margin-left 0.25s ease, width 0.25s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @media (min-width: 960px) {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    padding: 32px 40px 48px;
+  }
+}
+
+.contentFull {
+  @media (min-width: 960px) {
+    margin-left: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,1 @@
+export type SyllabusError = { type: "notAvailable" } | { type: "unknown"; message: string };

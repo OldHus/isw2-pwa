@@ -1,0 +1,99 @@
+@use "../../../styles/tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+
+  @media (min-width: 640px) {
+    padding: 32px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $accent-primary;
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.createButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: $accent-primary;
+  color: $bg-primary;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.feedback {
+  background: $primary-container;
+  color: $on-primary-container;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid $outline;
+  border-top-color: $accent-primary;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorText {
+  color: $danger;
+  text-align: center;
+}
+
+.emptyState {
+  color: $text-secondary;
+  padding: 32px 20px;
+  background: $bg-surface;
+  border-radius: 12px;
+  text-align: center;
+}

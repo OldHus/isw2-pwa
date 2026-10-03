@@ -1,0 +1,106 @@
+@use "../../../styles/tokens" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: $scrim;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  z-index: 100;
+
+  @media (min-width: 640px) {
+    align-items: center;
+    padding: 16px;
+  }
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+  background: $bg-surface-elevated;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  box-shadow: $shadow-elevated;
+
+  @media (min-width: 640px) {
+    border-radius: 20px;
+  }
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.15rem;
+  color: $text-primary;
+  margin: 0 0 16px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  input[type="text"],
+  textarea {
+    background: $bg-primary;
+    border: 1px solid $outline;
+    border-radius: 10px;
+    padding: 10px 12px;
+    color: $text-primary;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+
+    &:focus-visible {
+      outline: 2px solid $accent-primary;
+      outline-offset: 1px;
+    }
+  }
+}
+
+.fieldLabel {
+  color: $text-secondary;
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}
+
+.confirmButton {
+  background: $accent-primary;
+  color: $bg-primary;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

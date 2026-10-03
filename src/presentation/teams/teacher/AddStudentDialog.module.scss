@@ -1,0 +1,99 @@
+@use "../../../styles/tokens" as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: $scrim;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  z-index: 100;
+
+  @media (min-width: 640px) {
+    align-items: center;
+    padding: 16px;
+  }
+}
+
+.dialog {
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: $bg-surface-elevated;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  box-shadow: $shadow-elevated;
+
+  @media (min-width: 640px) {
+    border-radius: 20px;
+  }
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.15rem;
+  color: $text-primary;
+  margin: 0 0 16px;
+}
+
+.emptyState {
+  color: $text-secondary;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.studentButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}
+
+.studentName {
+  color: $text-primary;
+  font-size: 0.9rem;
+}
+
+.closeRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}

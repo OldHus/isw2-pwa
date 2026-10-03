@@ -1,0 +1,307 @@
+@use "../../../styles/tokens" as *;
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 16px;
+  text-align: center;
+  color: $text-secondary;
+}
+
+.errorText {
+  color: $danger;
+  padding: 24px;
+  text-align: center;
+}
+
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.formTitle {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.formHint {
+  font-size: 0.875rem;
+  color: $text-secondary;
+  margin: -8px 0 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-secondary;
+}
+
+.input {
+  font-family: $font-body;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid $outline;
+  background: $bg-primary;
+  color: $text-primary;
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 1px;
+  }
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.primaryButtonInline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+
+.activeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+}
+
+.codeLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $text-secondary;
+}
+
+.codeBadge {
+  display: inline-flex;
+  align-self: flex-start;
+  font-family: $font-display;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: $on-primary-container;
+  background: $primary-container;
+  padding: 8px 24px;
+  border-radius: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.codeBadgeExpired {
+  color: $text-secondary;
+  background: $bg-surface;
+}
+
+.expiredNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: $text-secondary;
+  line-height: 1.4;
+}
+
+.timerRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.timerText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: $accent-primary;
+}
+
+.timerTextExpired {
+  color: $danger;
+}
+
+.timerTrack {
+  height: 6px;
+  border-radius: 999px;
+  background: $outline;
+  overflow: hidden;
+}
+
+.timerFill {
+  height: 100%;
+  background: $accent-primary;
+  border-radius: 999px;
+  transition: width 1s linear, background-color 0.3s ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.timerFillLow {
+  background: $danger;
+}
+
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.outlinedButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-primary;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.copyFeedback {
+  font-size: 0.8125rem;
+  color: $success;
+  font-weight: 600;
+}
+
+.rosterHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.rosterTitle {
+  font-family: $font-display;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.rosterCount {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+}
+
+.rosterList {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid $outline;
+}
+
+.rosterRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid $outline;
+}
+
+.rosterName {
+  font-size: 0.9375rem;
+  color: $text-primary;
+}
+
+.rosterEmail {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+}
+
+.rosterTime {
+  font-size: 0.8125rem;
+  color: $text-secondary;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rosterEmpty {
+  padding: 16px 0;
+  color: $text-secondary;
+  font-size: 0.875rem;
+  text-align: center;
+}

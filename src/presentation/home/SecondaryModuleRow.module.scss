@@ -1,0 +1,40 @@
+@use "../../styles/tokens" as *;
+
+.row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  text-decoration: none;
+  border-bottom: 1px solid $outline;
+  min-width: 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: $bg-surface-elevated;
+  }
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: $accent-primary;
+  flex-shrink: 0;
+}
+
+.label {
+  color: $text-primary;
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.status {
+  color: $text-secondary;
+  font-size: 12px;
+  flex-shrink: 0;
+}

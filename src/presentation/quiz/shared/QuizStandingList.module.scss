@@ -1,0 +1,114 @@
+@use "../../../styles/tokens" as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid $outline;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.rowHighlighted {
+  margin: 0 -12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border-bottom-color: transparent;
+  background: $bg-surface;
+}
+
+.rank {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: $text-secondary;
+}
+
+.rankFirst {
+  background: $accent-primary;
+  color: $bg-primary;
+}
+
+.rankPodium {
+  background: $primary-container;
+  color: $on-primary-container;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.9375rem;
+  color: $text-primary;
+  overflow-wrap: anywhere;
+}
+
+.rowHighlighted .name {
+  font-weight: 600;
+}
+
+.youTag {
+  font-weight: 400;
+  color: $text-secondary;
+}
+
+.score {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: $accent-primary;
+  white-space: nowrap;
+}
+
+.scoreZero {
+  color: $text-secondary;
+}
+
+.toggle {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: $font-body;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: $accent-primary;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}

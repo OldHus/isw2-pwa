@@ -1,0 +1,205 @@
+@use "../../styles/tokens" as *;
+
+.screen {
+  padding: 32px 24px 48px;
+  font-family: $font-body;
+  max-width: 480px;
+}
+
+.title {
+  font-family: $font-display;
+  color: $text-primary;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.photoBlock {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.photoPlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $primary-container;
+  color: $on-primary-container;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: $font-display;
+}
+
+.photoActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.changeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 500px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-primary;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $accent-primary;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.removeButton {
+  padding: 4px 8px;
+  margin-left: 4px;
+  border: none;
+  background: transparent;
+  color: $danger;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.info {
+  margin-bottom: 16px;
+}
+
+.name {
+  color: $text-primary;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.role {
+  color: $text-secondary;
+  font-size: 13px;
+}
+
+.error {
+  color: $danger;
+  font-size: 13px;
+}
+
+.success {
+  color: $success;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.notificationsBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid $outline;
+  border-radius: 14px;
+}
+
+.notificationsTitle {
+  font-family: $font-display;
+  color: $text-primary;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.notificationsHint {
+  color: $text-secondary;
+  font-size: 13px;
+  margin: 0;
+}
+
+.notificationsActive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.notificationsActiveLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $success;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.notificationsToggleButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 500px;
+  border: 1px solid $outline;
+  background: transparent;
+  color: $text-primary;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: $accent-primary;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.notificationsError {
+  color: $danger;
+  font-size: 13px;
+  margin: 0;
+}

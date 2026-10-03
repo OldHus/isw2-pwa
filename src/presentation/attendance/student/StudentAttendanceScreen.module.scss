@@ -1,0 +1,139 @@
+@use "../../../styles/tokens" as *;
+
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  gap: 12px;
+  text-align: center;
+  color: $text-secondary;
+  max-width: 320px;
+  padding: 40px 16px;
+}
+
+.errorText {
+  color: $danger;
+  text-align: center;
+  padding: 24px;
+}
+
+.successCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  gap: 10px;
+  text-align: center;
+  padding: 32px 28px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+  max-width: 320px;
+  width: 100%;
+}
+
+.successIcon {
+  color: $success;
+}
+
+.successTitle {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.successCode {
+  font-size: 0.875rem;
+  color: $text-secondary;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  gap: 16px;
+  padding: 28px 24px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.formTitle {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $text-secondary;
+}
+
+.input {
+  font-family: $font-body;
+  font-size: 1.125rem;
+  text-align: center;
+  letter-spacing: 0.06em;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid $outline;
+  background: $bg-primary;
+  color: $text-primary;
+
+  &.inputError {
+    border-color: $danger;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 1px;
+  }
+}
+
+.fieldError {
+  font-size: 0.8125rem;
+  color: $danger;
+}
+
+.primaryButton {
+  font-family: $font-body;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: none;
+  background: $accent-primary;
+  color: $bg-primary;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    opacity: 0.9;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}

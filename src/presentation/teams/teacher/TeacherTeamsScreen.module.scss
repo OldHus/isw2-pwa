@@ -1,0 +1,258 @@
+@use "../../../styles/tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+
+  @media (min-width: 640px) {
+    padding: 32px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $accent-primary;
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.createButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: $accent-primary;
+  color: $bg-primary;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.feedback {
+  background: $primary-container;
+  color: $on-primary-container;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid $outline;
+  border-top-color: $accent-primary;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorText {
+  color: $danger;
+  text-align: center;
+}
+
+.emptyState {
+  color: $text-secondary;
+  padding: 20px;
+  background: $bg-surface;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.teamList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.teamCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $accent-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+}
+
+.teamInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.teamName {
+  color: $text-primary;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.teamMemberCount {
+  color: $text-secondary;
+  font-size: 0.8rem;
+}
+
+.teamActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.iconButton,
+.iconButtonDanger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.iconButton {
+  background: $primary-container;
+  color: $on-primary-container;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+.iconButtonDanger {
+  background: none;
+  color: $danger;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: $scrim;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  z-index: 100;
+
+  @media (min-width: 640px) {
+    align-items: center;
+    padding: 16px;
+  }
+}
+
+.confirmDialog {
+  width: 100%;
+  max-width: 420px;
+  background: $bg-surface-elevated;
+  border-radius: 20px 20px 0 0;
+  padding: 24px;
+  box-shadow: $shadow-elevated;
+
+  @media (min-width: 640px) {
+    border-radius: 20px;
+  }
+}
+
+.confirmTitle {
+  font-family: $font-display;
+  font-size: 1.15rem;
+  color: $text-primary;
+  margin: 0 0 12px;
+}
+
+.confirmText {
+  color: $text-secondary;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}
+
+.confirmDeleteButton {
+  background: $danger;
+  color: $bg-primary;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+}

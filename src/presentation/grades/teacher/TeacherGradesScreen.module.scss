@@ -1,0 +1,357 @@
+@use "../../../styles/tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+
+  @media (min-width: 640px) {
+    padding: 32px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $accent-primary;
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0;
+}
+
+.matrixLink {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: $accent-primary;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid $outline;
+
+  &:hover {
+    background: $primary-container;
+  }
+}
+
+.feedback {
+  background: $primary-container;
+  color: $on-primary-container;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid $outline;
+  border-top-color: $accent-primary;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorText {
+  color: $danger;
+  text-align: center;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  font-family: $font-display;
+  font-size: 1.05rem;
+  color: $text-primary;
+  margin: 0 0 12px;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: $accent-primary;
+  color: $bg-primary;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.emptyState {
+  color: $text-secondary;
+  padding: 20px;
+  background: $bg-surface;
+  border-radius: 12px;
+  text-align: center;
+  margin: 0;
+}
+
+.itemList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.itemRow,
+.itemRowConfirm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 18px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid $outline;
+  }
+}
+
+.itemNameText {
+  color: $text-primary;
+  font-size: 0.95rem;
+}
+
+.itemNameInput {
+  flex: 1;
+  background: $bg-primary;
+  border: 1px solid $outline;
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: $text-primary;
+  font-size: 0.95rem;
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 1px;
+  }
+}
+
+.itemRowActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.itemRowConfirm {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px 18px;
+  background: $bg-surface;
+
+  .itemRowActions {
+    justify-content: flex-end;
+  }
+}
+
+.confirmText {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: $text-primary;
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.warningIcon {
+  color: $danger;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.confirmDeleteButton {
+  background: $danger;
+  color: $bg-primary;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.cancelButtonSmall {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:hover {
+    background: $bg-surface-elevated;
+  }
+}
+
+.iconButton,
+.iconButtonMuted,
+.iconButtonDanger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.iconButton {
+  background: $primary-container;
+  color: $on-primary-container;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+}
+
+.iconButtonMuted {
+  background: none;
+  color: $text-secondary;
+
+  &:hover {
+    background: $bg-surface;
+  }
+}
+
+.iconButtonDanger {
+  background: none;
+  color: $danger;
+
+  &:hover {
+    background: $bg-surface;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.studentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.studentCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 14px;
+  padding: 14px 18px;
+  text-decoration: none;
+
+  &:hover {
+    border-color: $accent-primary;
+  }
+}
+
+.studentAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.studentAvatarPlaceholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $primary-container;
+  color: $on-primary-container;
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.studentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.studentName {
+  color: $text-primary;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.studentEmail {
+  color: $text-secondary;
+  font-size: 0.8rem;
+}
+
+.studentName {
+  color: $text-primary;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.studentEmail {
+  color: $text-secondary;
+  font-size: 0.8rem;
+}

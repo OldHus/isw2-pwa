@@ -1,0 +1,183 @@
+@use "../../../styles/tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+
+  @media (min-width: 640px) {
+    padding: 32px;
+  }
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $text-secondary;
+  text-decoration: none;
+  font-size: 0.85rem;
+  width: fit-content;
+
+  &:hover {
+    color: $accent-primary;
+  }
+}
+
+.title {
+  font-family: $font-display;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin: 0 0 8px;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid $outline;
+  border-top-color: $accent-primary;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorText {
+  color: $danger;
+  text-align: center;
+}
+
+.emptyState {
+  color: $text-secondary;
+  padding: 20px;
+  background: $bg-surface;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.tableScroll {
+  overflow-x: auto;
+  border: 1px solid $outline;
+  border-radius: 16px;
+  background: $bg-surface-elevated;
+}
+
+.table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+}
+
+.studentHeaderCell,
+.itemHeaderCell {
+  text-align: left;
+  font-family: $font-body;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 12px 16px;
+  border-bottom: 1px solid $outline;
+  white-space: nowrap;
+}
+
+.studentHeaderCell {
+  position: sticky;
+  left: 0;
+  background: $bg-surface-elevated;
+  z-index: 1;
+}
+
+.row:not(:last-child) .studentCell,
+.row:not(:last-child) .gradeCell {
+  border-bottom: 1px solid $outline;
+}
+
+.studentCell {
+  position: sticky;
+  left: 0;
+  background: $bg-surface-elevated;
+  padding: 0;
+  z-index: 1;
+}
+
+.studentCellButton {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: $text-primary;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    color: $accent-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: -2px;
+  }
+}
+
+.studentCellContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.studentCellAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.studentCellAvatarPlaceholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $primary-container;
+  color: $on-primary-container;
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.gradeCell {
+  padding: 12px 16px;
+  text-align: center;
+  font-family: $font-display;
+  font-variant-numeric: tabular-nums;
+  color: $text-primary;
+  white-space: nowrap;
+}
