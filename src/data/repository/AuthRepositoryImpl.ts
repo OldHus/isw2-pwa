@@ -91,12 +91,20 @@ export class AuthRepositoryImpl implements AuthRepository {
       }
       const role = (data[ROLE_FIELD] as string) ?? DEFAULT_ROLE;
       const courseId = (data[COURSE_ID_FIELD] as string) ?? "";
-      const name = (data[NAME_FIELD] as string) ?? "";
+      const name = this.resolveDisplayName(data[NAME_FIELD], user);
       const photoUrl = (data[PHOTO_URL_FIELD] as string) ?? "";
       return success({ type: "existingUser", uid: user.uid, role, courseId, name, photoUrl });
     }
 
     return success({ type: "newUser", uid: user.uid });
+  }
+
+  private resolveDisplayName(storedName: unknown, user: User): string {
+    const fromProfile = typeof storedName === "string" ? storedName.trim() : "";
+    if (fromProfile) return fromProfile;
+    const fromAccount = user.displayName?.trim() ?? "";
+    if (fromAccount) return fromAccount;
+    return (user.email ?? "").split("@")[0];
   }
 
   private mapAuthError(error: unknown, method: "google" | "email"): AppResult<never, AuthError> {

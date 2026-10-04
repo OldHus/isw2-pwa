@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 
 import type { QuizAnswer, QuizSession, QuizStandingEntry } from "../../../domain/model/QuizModels";
+import type { QuizLeaderboardEntry } from "../shared/buildQuizLeaderboard";
 import { QuizStandingList } from "../shared/QuizStandingList";
 import { useStudentQuizViewModel } from "./useStudentQuizViewModel";
 import styles from "./StudentQuizScreen.module.scss";
+
+const QUESTION_RANKING_SIZE = 5;
 
 interface StudentQuizScreenProps {
   courseId: string;
 }
 
 export function StudentQuizScreen({ courseId }: StudentQuizScreenProps) {
-  const { uiState, answer, myStanding, standing } = useStudentQuizViewModel(courseId);
+  const { uiState, answer, myStanding, standing, questionRanking } = useStudentQuizViewModel(courseId);
 
   switch (uiState.type) {
     case "loading":
@@ -39,6 +42,12 @@ export function StudentQuizScreen({ courseId }: StudentQuizScreenProps) {
         <div className={styles.wrapper}>
           <MyStandingBadge standing={myStanding} />
           <QuestionView session={uiState.session} myAnswer={uiState.myAnswer} onAnswer={answer} />
+          {!uiState.session.isActive && (
+            <QuestionRankingCard
+              ranking={questionRanking}
+              myUid={uiState.myAnswer?.studentUid ?? myStanding?.studentUid ?? null}
+            />
+          )}
           <CourseStandingCard standing={standing} myUid={myStanding?.studentUid ?? null} />
         </div>
       );
@@ -52,6 +61,40 @@ interface MyStandingBadgeProps {
 function MyStandingBadge({ standing }: MyStandingBadgeProps) {
   return (
     <p className={styles.myStanding}>Tu puntaje acumulado: {standing?.totalScore ?? 0} pts</p>
+  );
+}
+
+interface QuestionRankingCardProps {
+  ranking: QuizLeaderboardEntry[];
+  myUid: string | null;
+}
+
+function QuestionRankingCard({ ranking, myUid }: QuestionRankingCardProps) {
+  if (ranking.length === 0) return null;
+
+  const winners = ranking.filter((entry) => entry.isCorrect).slice(0, QUESTION_RANKING_SIZE);
+
+  return (
+    <div className={styles.standingCard}>
+      <div className={styles.standingHeading}>
+        <h2 className={styles.standingTitle}>Mejores puntajes de esta pregunta</h2>
+        <p className={styles.standingCount}>
+          {ranking.length === 1 ? "1 respuesta" : `${ranking.length} respuestas`}
+        </p>
+      </div>
+      {winners.length === 0 ? (
+        <p className={styles.statusNotice}>Nadie acertó esta pregunta.</p>
+      ) : (
+        <QuizStandingList
+          standing={winners.map((entry) => ({
+            studentUid: entry.studentUid,
+            studentName: entry.studentName,
+            totalScore: entry.score,
+          }))}
+          highlightedStudentUid={myUid}
+        />
+      )}
+    </div>
   );
 }
 
@@ -125,10 +168,14 @@ function QuestionView({ session, myAnswer, onAnswer }: QuestionViewProps) {
   const revealResult = !session.isActive && myAnswer !== null;
   const answeredCorrectly = resolveAnsweredCorrectly(session, myAnswer);
 
+  const waitingForClose = session.isActive && myAnswer !== null && remainingSeconds > 0;
+
   const statusText = canAnswer
     ? `Tiempo restante: ${remainingSeconds}s`
     : !session.isActive
     ? "Pregunta cerrada"
+    : waitingForClose
+    ? `Respuesta enviada — cierra en ${remainingSeconds}s`
     : myAnswer !== null
     ? "Respuesta enviada — esperando cierre"
     : "Tiempo agotado";
@@ -136,7 +183,7 @@ function QuestionView({ session, myAnswer, onAnswer }: QuestionViewProps) {
   return (
     <div className={styles.questionCard}>
       <h2 className={styles.question}>{session.questionText}</h2>
-      <p className={canAnswer ? styles.remaining : styles.statusNotice}>{statusText}</p>
+      <p className={canAnswer || waitingForClose ? styles.remaining : styles.statusNotice}>{statusText}</p>
 
       <ul className={styles.optionList}>
         {session.options.map((option, index) => {

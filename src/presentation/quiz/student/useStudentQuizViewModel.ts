@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { QuizStandingEntry } from "../../../domain/model/QuizModels";
 import { container } from "../../../di/container";
 import { mapQuizErrorMessage } from "../shared/mapQuizErrorMessage";
+import { buildQuizLeaderboard } from "../shared/buildQuizLeaderboard";
+import type { QuizLeaderboardEntry } from "../shared/buildQuizLeaderboard";
 import type { StudentQuizUiState } from "./StudentQuizUiState";
 
 export function useStudentQuizViewModel(courseId: string) {
@@ -12,8 +14,10 @@ export function useStudentQuizViewModel(courseId: string) {
 
   const [myStanding, setMyStanding] = useState<QuizStandingEntry | null>(null);
   const [standing, setStanding] = useState<QuizStandingEntry[]>([]);
+  const [questionRanking, setQuestionRanking] = useState<QuizLeaderboardEntry[]>([]);
 
   const unsubscribeAnswerRef = useRef<(() => void) | null>(null);
+  const unsubscribeRankingRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const unsubscribeSession = container.observeLatestQuizSessionUseCase.execute(
@@ -21,10 +25,24 @@ export function useStudentQuizViewModel(courseId: string) {
       (session) => {
         unsubscribeAnswerRef.current?.();
         unsubscribeAnswerRef.current = null;
+        unsubscribeRankingRef.current?.();
+        unsubscribeRankingRef.current = null;
 
         if (!session) {
+          setQuestionRanking([]);
           setUiState({ type: "noActiveQuestion" });
           return;
+        }
+
+        if (session.isActive) {
+          setQuestionRanking([]);
+        } else {
+          unsubscribeRankingRef.current = container.observeQuizSessionAnswersUseCase.execute(
+            courseId,
+            session.id,
+            (answers) => setQuestionRanking(buildQuizLeaderboard(session.correctOptionIndex, answers)),
+            () => setQuestionRanking([])
+          );
         }
 
         unsubscribeAnswerRef.current = container.observeMyQuizAnswerUseCase.execute(
@@ -46,6 +64,7 @@ export function useStudentQuizViewModel(courseId: string) {
     return () => {
       unsubscribeSession();
       unsubscribeAnswerRef.current?.();
+      unsubscribeRankingRef.current?.();
     };
   }, [courseId]);
 
@@ -92,5 +111,5 @@ export function useStudentQuizViewModel(courseId: string) {
     [courseId]
   );
 
-  return { uiState, answer, myStanding, standing };
+  return { uiState, answer, myStanding, standing, questionRanking };
 }
