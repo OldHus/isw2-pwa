@@ -17,8 +17,7 @@ Es la guía del curso: qué vas a aprender, el contenido, la evaluación y la bi
 
 ### 2. Plataforma de aula (este repositorio)
 
-
-**URL:** _en despliegue, disponible próximamente._
+**https://ingesoftun4l.com**
 
 Es la aplicación con los módulos que usamos durante el semestre: asistencia, calificaciones, quices, encuestas, muro y proyecto de aula. Todo lo que sigue en este documento habla de ella.
 
@@ -51,18 +50,13 @@ Si en clase hablamos de inversión de dependencias o del patrón Repository, aqu
 
 Hay dos roles, **docente** y **estudiante**, y cada uno ve las acciones que le corresponden. El ingreso es con cuenta de Google o con correo y contraseña.
 
-<!-- TODO (opcional): capturas o GIFs de los flujos en vivo
-![Quiz en vivo](docs/img/quiz-en-vivo.gif)
-![Tablero del proyecto de aula](docs/img/tablero-equipo.png)
-![Vista de estudiante](docs/img/inicio-estudiante.png)
--->
 
 ## Tecnologías
 
 - **React + TypeScript**, empaquetado con **Vite**
-- **Firebase** como servicios en la nube <!-- TODO: precisar cuáles (Auth, Firestore, Storage, Messaging, Analytics) -->
-- **Pruebas automatizadas** <!-- TODO: indicar el framework (Vitest, Testing Library, ...) -->
-<!-- TODO: despliegue e integración continua (Netlify, GitHub Actions, ...) -->
+- **Firebase** como servicios en la nube
+- **Pruebas automatizadas**
+- **Cloudflare Workers** para el despliegue: la compilación se publica como archivos estáticos con Wrangler
 
 ## Arquitectura
 
@@ -92,7 +86,7 @@ src/
 │   └── service/         ConsoleCrashReporter, FirebaseAnalyticsReporter
 └── di/                  contenedor: el único lugar donde se hace "new"
 ```
-<!-- TODO: confirmar el nombre de la carpeta del contenedor y agregar la capa de presentación (pantallas, componentes, hooks) y la carpeta de los contratos/modelos del dominio -->
+
 
 ### Dominio
 
@@ -143,8 +137,8 @@ Fíjate en tres cosas:
 | **DDD · Lenguaje ubicuo** | Los nombres del código son los del aula: curso, equipo, ítem de evaluación, sesión de asistencia, encuesta, quiz. |
 | **Seguridad** | Autenticación con Google (OAuth 2.0) y con correo y contraseña; autorización por rol. |
 | **Testing** | Como las dependencias se inyectan, un caso de uso se prueba con un repositorio falso, sin red ni base de datos. <!-- TODO: indicar dónde están las pruebas --> |
+| **DevOps · Despliegue** | `wrangler.jsonc` describe el despliegue como código: `npm run build` genera `dist/` y `npx wrangler deploy` lo publica en Cloudflare Workers. El dominio `ingesoftun4l.com` también está declarado ahí. |
 
-<!-- TODO: fila de DevOps (pipeline de CI/CD, despliegue) cuando me confirmes cómo está montado -->
 
 ## Cómo recorrer el código
 
@@ -174,16 +168,17 @@ sequenceDiagram
 
 ## Ejecutarlo en local
 
-Requisitos: Node.js y npm. <!-- TODO: versión mínima de Node -->
+Requisitos: Node.js y npm.
 
 ```bash
-git clone <url-del-repositorio>
-cd <carpeta-del-repositorio>
+git clone https://github.com/OldHus/isw2-pwa.git
+cd isw2-pwa
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-<!-- TODO: explicar la configuración de Firebase (archivo .env y variables) o aclarar que los estudiantes no necesitan credenciales propias -->
+La aplicación necesita las credenciales de un proyecto de Firebase. El archivo `.env.example` lista las variables requeridas; cópialo como `.env.local` y completa los valores. `.env.local` nunca se sube al repositorio.
 
 | Comando | Qué hace |
 |---|---|
@@ -199,5 +194,3 @@ npm run dev
 - ¿Cómo probarías `SubmitAttendanceUseCase` sin conexión a internet?
 - El contenedor crea todas las instancias al iniciar la aplicación. ¿Qué ventajas y qué costos tiene frente a crearlas bajo demanda?
 - ¿Dónde aplicarías un patrón de diseño que **no** está en el proyecto? ¿Y dónde sería un error aplicarlo?
-
-<!-- TODO: licencia del repositorio -->
