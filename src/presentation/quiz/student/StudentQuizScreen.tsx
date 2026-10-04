@@ -76,6 +76,24 @@ function CourseStandingCard({ standing, myUid }: CourseStandingCardProps) {
   );
 }
 
+function resolveAnsweredCorrectly(session: QuizSession, myAnswer: QuizAnswer | null): boolean | null {
+  if (myAnswer === null) return null;
+  if (myAnswer.isCorrect !== null) return myAnswer.isCorrect;
+  if (session.correctOptionIndex !== null) return myAnswer.selectedOptionIndex === session.correctOptionIndex;
+  return null;
+}
+
+function resolveOptionMark(
+  index: number,
+  isSelected: boolean,
+  correctOptionIndex: number | null,
+  answeredCorrectly: boolean | null
+): boolean | null {
+  if (correctOptionIndex !== null) return index === correctOptionIndex;
+  if (isSelected && answeredCorrectly !== null) return answeredCorrectly;
+  return null;
+}
+
 interface QuestionViewProps {
   session: QuizSession;
   myAnswer: QuizAnswer | null;
@@ -105,6 +123,7 @@ function QuestionView({ session, myAnswer, onAnswer }: QuestionViewProps) {
 
   const canAnswer = session.isActive && myAnswer === null && Date.now() < session.expiresAt;
   const revealResult = !session.isActive && myAnswer !== null;
+  const answeredCorrectly = resolveAnsweredCorrectly(session, myAnswer);
 
   const statusText = canAnswer
     ? `Tiempo restante: ${remainingSeconds}s`
@@ -122,7 +141,9 @@ function QuestionView({ session, myAnswer, onAnswer }: QuestionViewProps) {
       <ul className={styles.optionList}>
         {session.options.map((option, index) => {
           const isSelected = myAnswer?.selectedOptionIndex === index;
-          const isCorrect = revealResult ? index === session.correctOptionIndex : null;
+          const isCorrect = revealResult
+            ? resolveOptionMark(index, isSelected, session.correctOptionIndex, answeredCorrectly)
+            : null;
           return (
             <li key={index}>
               <OptionRow
@@ -139,7 +160,9 @@ function QuestionView({ session, myAnswer, onAnswer }: QuestionViewProps) {
 
       {revealResult && myAnswer && (
         <p className={styles.resultText}>
-          {myAnswer.selectedOptionIndex === session.correctOptionIndex
+          {answeredCorrectly === null
+            ? "Calificando tu respuesta…"
+            : answeredCorrectly
             ? `¡Correcto! +${myAnswer.score} pts`
             : "Incorrecta — 0 pts"}
         </p>

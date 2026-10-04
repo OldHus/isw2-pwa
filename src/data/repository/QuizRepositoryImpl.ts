@@ -14,7 +14,13 @@ import {
     writeBatch,
     Timestamp,
 } from "firebase/firestore";
-import type { CollectionReference, DocumentData, DocumentSnapshot, QueryDocumentSnapshot } from "firebase/firestore";
+import type {
+    CollectionReference,
+    DocumentData,
+    DocumentReference,
+    DocumentSnapshot,
+    QueryDocumentSnapshot,
+} from "firebase/firestore";
 
 import { auth, db } from "../firebase/config";
 import type { QuizAnswer, QuizError, QuizQuestion, QuizSession, QuizStandingEntry } from "../../domain/model/QuizModels";
@@ -27,6 +33,8 @@ const COURSES_COLLECTION = "cursos";
 const QUESTION_BANK_SUBCOLLECTION = "bancoPreguntas";
 const SESSIONS_SUBCOLLECTION = "sesionQuiz";
 const ANSWERS_SUBCOLLECTION = "respuestas";
+const PRIVATE_SUBCOLLECTION = "privado";
+const ANSWER_KEY_DOC = "clave";
 const USERS_COLLECTION = "usuarios";
 
 const QUESTION_TEXT_FIELD = "texto";
@@ -46,22 +54,16 @@ const STUDENT_NAME_FIELD = "nombreEstudiante";
 const SELECTED_OPTION_FIELD = "indiceSeleccionado";
 const RESPONSE_TIME_FIELD = "tiempoRespuestaMs";
 const SCORE_FIELD = "puntaje";
+const IS_CORRECT_FIELD = "esCorrecta";
 const ANSWERED_AT_FIELD = "respondidoEn";
-
-const MAX_SCORE = 1000;
-const MIN_SCORE_IF_CORRECT = 100;
 
 function toUnknownError(e: unknown, fallback: string): QuizError {
     const message = e instanceof Error ? e.message : fallback;
     return { type: "unknown", message: message || fallback };
 }
 
-function computeScore(isCorrect: boolean, responseTimeMillis: number, durationSeconds: number): number {
-    if (!isCorrect) return 0;
-    const durationMillis = Math.max(durationSeconds * 1000, 1);
-    const ratio = Math.min(1, Math.max(0, responseTimeMillis / durationMillis));
-    const score = MAX_SCORE - ratio * (MAX_SCORE - MIN_SCORE_IF_CORRECT);
-    return Math.min(MAX_SCORE, Math.max(MIN_SCORE_IF_CORRECT, Math.round(score)));
+function isPermissionDenied(e: unknown): boolean {
+    return (e as { code?: string } | null)?.code === "permission-denied";
 }
 
 function toQuizQuestion(snapshot: DocumentSnapshot | QueryDocumentSnapshot): QuizQuestion {
@@ -82,11 +84,12 @@ function toQuizSession(snapshot: DocumentSnapshot | QueryDocumentSnapshot): Quiz
     const optionsRaw = data[SESSION_OPTIONS_FIELD];
     const launchedAt = data[LAUNCHED_AT_FIELD] as Timestamp | undefined;
     const expiresAt = data[EXPIRES_AT_FIELD] as Timestamp | undefined;
+    const correctOption: unknown = data[SESSION_CORRECT_OPTION_FIELD];
     return {
         id: snapshot.id,
         questionText: (data[SESSION_QUESTION_TEXT_FIELD] as string) ?? "",
         options: Array.isArray(optionsRaw) ? optionsRaw.filter((option): option is string => typeof option === "string") : [],
-        correctOptionIndex: (data[SESSION_CORRECT_OPTION_FIELD] as number) ?? 0,
+        correctOptionIndex: typeof correctOption === "number" ? correctOption : null,
         durationSeconds: (data[DURATION_FIELD] as number) ?? 0,
         isActive: (data[ACTIVE_FIELD] as boolean) ?? false,
         launchedAt: launchedAt ? launchedAt.toMillis() : 0,
@@ -98,12 +101,14 @@ function toQuizAnswer(snapshot: DocumentSnapshot | QueryDocumentSnapshot): QuizA
     const data = snapshot.data() ?? {};
     const answeredAt = data[ANSWERED_AT_FIELD] as Timestamp | undefined;
     const studentName = ((data[STUDENT_NAME_FIELD] as string) ?? "").trim();
+    const isCorrect: unknown = data[IS_CORRECT_FIELD];
     return {
         studentUid: snapshot.id,
         studentName: studentName.length > 0 ? studentName : snapshot.id,
         selectedOptionIndex: (data[SELECTED_OPTION_FIELD] as number) ?? -1,
         responseTimeMillis: (data[RESPONSE_TIME_FIELD] as number) ?? 0,
         score: (data[SCORE_FIELD] as number) ?? 0,
+        isCorrect: typeof isCorrect === "boolean" ? isCorrect : null,
         answeredAt: answeredAt ? answeredAt.toMillis() : 0,
     };
 }
@@ -234,9 +239,12 @@ export class QuizRepositoryImpl implements QuizRepository {
 
             const activeQuery = query(sessionsRef, where(ACTIVE_FIELD, "==", true));
             const activeSnapshot = await getDocs(activeQuery);
+            const closingUpdates = await Promise.all(
+                activeSnapshot.docs.map((docSnapshot) => this.buildClosingUpdate(courseId, docSnapshot.id))
+            );
             const batch = writeBatch(db);
-            activeSnapshot.docs.forEach((docSnapshot) => {
-                batch.update(docSnapshot.ref, { [ACTIVE_FIELD]: false });
+            activeSnapshot.docs.forEach((docSnapshot, index) => {
+                batch.update(docSnapshot.ref, closingUpdates[index]);
             });
 
             const newDocRef = doc(sessionsRef);
@@ -246,13 +254,15 @@ export class QuizRepositoryImpl implements QuizRepository {
             const data: DocumentData = {
                 [SESSION_QUESTION_TEXT_FIELD]: question.text,
                 [SESSION_OPTIONS_FIELD]: question.options,
-                [SESSION_CORRECT_OPTION_FIELD]: question.correctOptionIndex,
                 [DURATION_FIELD]: durationSeconds,
                 [ACTIVE_FIELD]: true,
                 [LAUNCHED_AT_FIELD]: now,
                 [EXPIRES_AT_FIELD]: expiresAt,
             };
             batch.set(newDocRef, data);
+            batch.set(this.answerKeyDoc(courseId, newDocRef.id), {
+                [SESSION_CORRECT_OPTION_FIELD]: question.correctOptionIndex,
+            });
             await batch.commit();
 
             return success({
@@ -274,7 +284,7 @@ export class QuizRepositoryImpl implements QuizRepository {
     async closeSession(courseId: string, sessionId: string): Promise<AppResult<void, QuizError>> {
         try {
             const sessionRef = doc(this.sessionsCollection(courseId), sessionId);
-            await updateDoc(sessionRef, { [ACTIVE_FIELD]: false });
+            await updateDoc(sessionRef, await this.buildClosingUpdate(courseId, sessionId));
             return success(undefined);
         } catch (e) {
             this.crashReporter.recordException(e);
@@ -343,17 +353,10 @@ export class QuizRepositoryImpl implements QuizRepository {
             const profileName = ((ownProfile?.["nombre"] as string | undefined) ?? "").trim();
             const studentName = profileName.length > 0 ? profileName : auth.currentUser?.email ?? studentUid;
 
-            const answeredAtMillis = Date.now();
-            const responseTimeMillis = Math.max(0, answeredAtMillis - session.launchedAt);
-            const isCorrect = selectedOptionIndex === session.correctOptionIndex;
-            const score = computeScore(isCorrect, responseTimeMillis, session.durationSeconds);
-
             const answerRef = doc(this.answersCollection(courseId, session.id), studentUid);
             await setDoc(answerRef, {
                 [STUDENT_NAME_FIELD]: studentName,
                 [SELECTED_OPTION_FIELD]: selectedOptionIndex,
-                [RESPONSE_TIME_FIELD]: responseTimeMillis,
-                [SCORE_FIELD]: score,
                 [ANSWERED_AT_FIELD]: Timestamp.now(),
             });
             return success(undefined);
@@ -450,6 +453,9 @@ export class QuizRepositoryImpl implements QuizRepository {
                     answersSnapshot.docs.map((answerSnapshot) => deleteDoc(answerSnapshot.ref))
                 )
             );
+            await Promise.all(
+                sessionsSnapshot.docs.map((sessionSnapshot) => deleteDoc(this.answerKeyDoc(courseId, sessionSnapshot.id)))
+            );
             await Promise.all(sessionsSnapshot.docs.map((sessionSnapshot) => deleteDoc(sessionSnapshot.ref)));
 
             return success(undefined);
@@ -469,6 +475,7 @@ export class QuizRepositoryImpl implements QuizRepository {
     ): () => void {
         const answersBySession = new Map<string, QuizAnswer[]>();
         const answerUnsubscribers = new Map<string, () => void>();
+        const deniedSessions = new Set<string>();
 
         const emitIfReady = () => {
             if (answersBySession.size < answerUnsubscribers.size) return;
@@ -479,6 +486,7 @@ export class QuizRepositoryImpl implements QuizRepository {
             answerUnsubscribers.get(sessionId)?.();
             answerUnsubscribers.delete(sessionId);
             answersBySession.delete(sessionId);
+            deniedSessions.delete(sessionId);
         };
 
         const unsubscribeSessions = onSnapshot(
@@ -489,6 +497,10 @@ export class QuizRepositoryImpl implements QuizRepository {
                 Array.from(answerUnsubscribers.keys())
                     .filter((sessionId) => !sessionIds.has(sessionId))
                     .forEach(stopSession);
+
+                // Algo cambió en las sesiones (por ejemplo, se cerró una pregunta):
+                // se vuelven a pedir las respuestas que antes no se podían leer.
+                Array.from(deniedSessions).forEach(stopSession);
 
                 sessionIds.forEach((sessionId) => {
                     if (answerUnsubscribers.has(sessionId)) return;
@@ -501,7 +513,16 @@ export class QuizRepositoryImpl implements QuizRepository {
                                 answersBySession.set(sessionId, answers);
                                 emitIfReady();
                             },
-                            onError
+                            (error) => {
+                                if (!answerUnsubscribers.has(sessionId)) return;
+                                if (!isPermissionDenied(error)) {
+                                    onError(error);
+                                    return;
+                                }
+                                deniedSessions.add(sessionId);
+                                answersBySession.set(sessionId, []);
+                                emitIfReady();
+                            }
                         )
                     );
                 });
@@ -515,6 +536,20 @@ export class QuizRepositoryImpl implements QuizRepository {
             unsubscribeSessions();
             Array.from(answerUnsubscribers.keys()).forEach(stopSession);
         };
+    }
+
+    private async buildClosingUpdate(courseId: string, sessionId: string): Promise<DocumentData> {
+        const update: DocumentData = { [ACTIVE_FIELD]: false };
+        const keySnapshot = await getDoc(this.answerKeyDoc(courseId, sessionId));
+        const correctOption: unknown = keySnapshot.data()?.[SESSION_CORRECT_OPTION_FIELD];
+        if (typeof correctOption === "number") {
+            update[SESSION_CORRECT_OPTION_FIELD] = correctOption;
+        }
+        return update;
+    }
+
+    private answerKeyDoc(courseId: string, sessionId: string): DocumentReference {
+        return doc(this.sessionsCollection(courseId), sessionId, PRIVATE_SUBCOLLECTION, ANSWER_KEY_DOC);
     }
 
     private bankCollection(courseId: string): CollectionReference {

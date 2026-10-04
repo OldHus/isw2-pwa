@@ -10,15 +10,23 @@ export interface QuizLeaderboardEntry {
   responseTimeMillis: number;
 }
 
-export function buildQuizLeaderboard(correctOptionIndex: number, answers: QuizAnswer[]): QuizLeaderboardEntry[] {
-  return [...answers]
-    .sort((a, b) => b.score - a.score || a.responseTimeMillis - b.responseTimeMillis)
-    .map((answer, index) => ({
+function resolveIsCorrect(answer: QuizAnswer, correctOptionIndex: number | null): boolean | null {
+  if (answer.isCorrect !== null) return answer.isCorrect;
+  if (correctOptionIndex !== null) return answer.selectedOptionIndex === correctOptionIndex;
+  return null;
+}
+
+export function buildQuizLeaderboard(correctOptionIndex: number | null, answers: QuizAnswer[]): QuizLeaderboardEntry[] {
+  return answers
+    .map((answer) => ({ answer, isCorrect: resolveIsCorrect(answer, correctOptionIndex) }))
+    .filter((graded): graded is { answer: QuizAnswer; isCorrect: boolean } => graded.isCorrect !== null)
+    .sort((a, b) => b.answer.score - a.answer.score || a.answer.responseTimeMillis - b.answer.responseTimeMillis)
+    .map(({ answer, isCorrect }, index) => ({
       rank: index + 1,
       studentUid: answer.studentUid,
       studentName: answer.studentName,
       selectedOptionIndex: answer.selectedOptionIndex,
-      isCorrect: answer.selectedOptionIndex === correctOptionIndex,
+      isCorrect,
       score: answer.score,
       responseTimeMillis: answer.responseTimeMillis,
     }));

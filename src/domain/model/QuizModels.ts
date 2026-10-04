@@ -1,4 +1,3 @@
-
 export interface QuizQuestion {
   id: string;
   text: string;
@@ -11,7 +10,7 @@ export interface QuizSession {
   id: string;
   questionText: string;
   options: string[];
-  correctOptionIndex: number;
+  correctOptionIndex: number | null;
   durationSeconds: number;
   isActive: boolean;
   launchedAt: number;
@@ -24,6 +23,7 @@ export interface QuizAnswer {
   selectedOptionIndex: number;
   responseTimeMillis: number;
   score: number;
+  isCorrect: boolean | null;
   answeredAt: number;
 }
 
