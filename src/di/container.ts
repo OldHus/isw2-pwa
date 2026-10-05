@@ -20,6 +20,7 @@ import { DeleteStudentGradeUseCase } from "../domain/usecase/DeleteStudentGradeU
 import { UpdateGradeItemUseCase } from "../domain/usecase/UpdateGradeItemUseCase";
 import { DeleteGradeItemUseCase } from "../domain/usecase/DeleteGradeItemUseCase";
 import { GetCourseGradesOverviewUseCase } from "../domain/usecase/GetCourseGradesOverviewUseCase";
+import { SetManyStudentGradesUseCase } from "../domain/usecase/SetManyStudentGradesUseCase";
 import { RedeemRegistrationCodeUseCase } from "../domain/usecase/RedeemRegistrationCodeUseCase";
 import { RegenerateAccessCodeUseCase } from "../domain/usecase/RegenerateAccessCodeUseCase";
 import { ProfileRepositoryImpl } from "../data/repository/ProfileRepositoryImpl";
@@ -120,6 +121,7 @@ export const container = {
   setStudentGradeUseCase: new SetStudentGradeUseCase(gradeRepository),
   deleteStudentGradeUseCase: new DeleteStudentGradeUseCase(gradeRepository),
   getCourseGradesOverviewUseCase: new GetCourseGradesOverviewUseCase(gradeRepository),
+  setManyStudentGradesUseCase: new SetManyStudentGradesUseCase(gradeRepository),
   updateGradeItemUseCase: new UpdateGradeItemUseCase(gradeRepository),
   deleteGradeItemUseCase: new DeleteGradeItemUseCase(gradeRepository),
   redeemRegistrationCodeUseCase: new RedeemRegistrationCodeUseCase(courseRepository),

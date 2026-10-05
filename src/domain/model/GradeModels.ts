@@ -22,3 +22,9 @@ export interface StudentGrades {
   studentUid: string;
   grades: Record<string, number>;
 }
+
+export interface GradeCellUpdate {
+  studentUid: string;
+  itemId: string;
+  grade: number | null;
+}

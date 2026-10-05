@@ -1,5 +1,5 @@
 import type { AppResult } from "../model/Result";
-import type { GradeError, GradeItem, StudentGrades } from "../model/GradeModels";
+import type { GradeCellUpdate, GradeError, GradeItem, StudentGrades } from "../model/GradeModels";
 
 export interface GradeRepository {
   getGradeItems(courseId: string): Promise<AppResult<GradeItem[], GradeError>>;
@@ -32,4 +32,9 @@ export interface GradeRepository {
   ): Promise<AppResult<void, GradeError>>;
 
   getAllStudentsGrades(courseId: string): Promise<AppResult<Record<string, StudentGrades>, GradeError>>;
+
+  setManyStudentGrades(
+    courseId: string,
+    updates: GradeCellUpdate[]
+  ): Promise<AppResult<void, GradeError>>;
 }

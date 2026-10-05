@@ -1,14 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { container } from "../../../../di/container";
-import { useAppSelector } from "../../../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { removeStudent, stageStudentGrades } from "../../../../store/slices/gradesDraftSlice";
+import type { GradeCellUpdate } from "../../../../domain/model/GradeModels";
 import type { StudentGradeEditUiState } from "../StudentGradeEditUiState";
+
+function normalizeRaw(raw: string): string {
+  return raw.trim().replace(",", ".");
+}
 
 export function useStudentGradeEditViewModel() {
   const { studentUid } = useParams<{ studentUid: string }>();
   const session = useAppSelector((state) => state.session);
+  const pendingForStudent = useAppSelector((state) =>
+    studentUid ? (state.gradesDraft.pending[studentUid] ?? {}) : {}
+  );
+  const dispatch = useAppDispatch();
   const [uiState, setUiState] = useState<StudentGradeEditUiState>({ status: "loading" });
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
     if (!session.courseId || !studentUid) {
@@ -43,6 +56,8 @@ export function useStudentGradeEditViewModel() {
     }
 
     setUiState({ status: "success", student, items: itemsResult.data, grades: gradesResult.data.grades });
+    setDraft({});
+    setErrors({});
   }, [session.courseId, studentUid]);
 
   useEffect(() => {
@@ -55,74 +70,188 @@ export function useStudentGradeEditViewModel() {
     return () => clearTimeout(timeout);
   }, [feedback]);
 
-  const saveGrade = useCallback(
-    async (itemId: string, rawValue: string) => {
-      if (!session.courseId || !studentUid) return;
+  const getBaseline = useCallback(
+    (itemId: string): number | null | undefined => {
+      if (itemId in pendingForStudent) {
+        return pendingForStudent[itemId];
+      }
+      if (uiState.status !== "success") return undefined;
+      return uiState.grades[itemId];
+    },
+    [pendingForStudent, uiState]
+  );
 
-      const normalized = rawValue.trim().replace(",", ".");
-      const grade = Number(normalized);
+  const updateValue = useCallback(
+    (itemId: string, raw: string) => {
+      const baseline = getBaseline(itemId);
+      const normalized = normalizeRaw(raw);
 
-      if (normalized.length === 0 || Number.isNaN(grade)) {
-        setFeedback("Ingresa una nota válida");
+      let isSameAsBaseline = false;
+      if (normalized === "") {
+        isSameAsBaseline = baseline === undefined || baseline === null;
+      } else {
+        const parsed = Number(normalized);
+        isSameAsBaseline =
+          typeof baseline === "number" && !Number.isNaN(parsed) && parsed === baseline;
+      }
+
+      setDraft((current) => {
+        if (isSameAsBaseline) {
+          if (!(itemId in current)) return current;
+          const next = { ...current };
+          delete next[itemId];
+          return next;
+        }
+        return { ...current, [itemId]: raw };
+      });
+
+      if (isSameAsBaseline || normalized === "") {
+        setErrors((current) => {
+          if (!(itemId in current)) return current;
+          const next = { ...current };
+          delete next[itemId];
+          return next;
+        });
         return;
       }
-
-      const result = await container.setStudentGradeUseCase.execute(
-        session.courseId,
-        studentUid,
-        itemId,
-        grade
-      );
-
-      if (result.success) {
-        container.analyticsReporter.logEvent("grade_saved", {
-          course_id: session.courseId,
-          item_id: itemId,
-          grade,
-        });
-        setFeedback("Nota guardada");
-        setUiState((current) =>
-          current.status === "success"
-            ? { ...current, grades: { ...current.grades, [itemId]: grade } }
-            : current
-        );
-      } else if (result.error.type === "invalidGrade") {
-        setFeedback(`La nota debe estar entre ${result.error.min} y ${result.error.max}`);
+      const parsed = Number(normalized);
+      if (Number.isNaN(parsed)) {
+        setErrors((current) => ({ ...current, [itemId]: "Ingresa una nota válida" }));
+      } else if (parsed < 0 || parsed > 5) {
+        setErrors((current) => ({ ...current, [itemId]: "La nota debe estar entre 0 y 5" }));
       } else {
-        setFeedback("No se pudo guardar la nota");
+        setErrors((current) => {
+          if (!(itemId in current)) return current;
+          const next = { ...current };
+          delete next[itemId];
+          return next;
+        });
       }
     },
-    [session.courseId, studentUid]
+    [getBaseline]
   );
 
-  const deleteGrade = useCallback(
-    async (itemId: string) => {
-      if (!session.courseId || !studentUid) return;
+  const dirtyCount = Object.keys(draft).length;
+  const pendingCount = Object.keys(pendingForStudent).length;
+  const hasErrors = Object.keys(errors).length > 0;
 
-      const result = await container.deleteStudentGradeUseCase.execute(
-        session.courseId,
-        studentUid,
-        itemId
-      );
+  const discard = useCallback(() => {
+    setDraft({});
+    setErrors({});
+    if (studentUid) {
+      dispatch(removeStudent({ studentUid }));
+    }
+    setFeedback("Cambios descartados");
+  }, [dispatch, studentUid]);
 
-      if (result.success) {
-        container.analyticsReporter.logEvent("grade_deleted", {
-          course_id: session.courseId,
-          item_id: itemId,
-        });
-        setFeedback("Nota eliminada");
-        setUiState((current) => {
-          if (current.status !== "success") return current;
-          const nextGrades = { ...current.grades };
-          delete nextGrades[itemId];
-          return { ...current, grades: nextGrades };
-        });
+  function parseDraftToGrades(
+    source: Record<string, string>,
+    serverGrades: Record<string, number>
+  ): Record<string, number | null> {
+    const parsed: Record<string, number | null> = {};
+    for (const [itemId, raw] of Object.entries(source)) {
+      const normalized = normalizeRaw(raw);
+      if (normalized === "") {
+        if (serverGrades[itemId] === undefined && !(itemId in pendingForStudent)) continue;
+        parsed[itemId] = null;
       } else {
-        setFeedback("No se pudo eliminar la nota");
+        const value = Number(normalized);
+        if (Number.isNaN(value)) continue;
+        parsed[itemId] = value;
       }
-    },
-    [session.courseId, studentUid]
-  );
+    }
+    return parsed;
+  }
 
-  return { uiState, feedback, saveGrade, deleteGrade };
+  const stageAndContinue = useCallback(() => {
+    if (!studentUid || uiState.status !== "success") return 0;
+    if (dirtyCount === 0 || hasErrors) return pendingCount;
+    const parsed = parseDraftToGrades(draft, uiState.grades);
+    if (Object.keys(parsed).length > 0) {
+      dispatch(stageStudentGrades({ studentUid, grades: parsed }));
+    }
+    setDraft({});
+    setErrors({});
+    return pendingCount + Object.keys(parsed).length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentUid, uiState, draft, dirtyCount, hasErrors, pendingCount, dispatch]);
+
+  const saveHere = useCallback(async () => {
+    if (!session.courseId || !studentUid || uiState.status !== "success") return;
+    if ((dirtyCount === 0 && pendingCount === 0) || hasErrors || saving) return;
+
+    const fromDraft = parseDraftToGrades(draft, uiState.grades);
+    const merged: Record<string, number | null> = { ...pendingForStudent, ...fromDraft };
+    const updates: GradeCellUpdate[] = Object.entries(merged).map(([itemId, grade]) => ({
+      studentUid,
+      itemId,
+      grade,
+    }));
+
+    if (updates.length === 0) {
+      setDraft({});
+      return;
+    }
+
+    setSaving(true);
+    const result = await container.setManyStudentGradesUseCase.execute(session.courseId, updates);
+    setSaving(false);
+
+    if (result.success) {
+      container.analyticsReporter.logEvent("grades_batch_saved", {
+        course_id: session.courseId,
+        count: updates.length,
+      });
+      setUiState((current) => {
+        if (current.status !== "success") return current;
+        const nextGrades = { ...current.grades };
+        for (const update of updates) {
+          if (update.grade === null) {
+            delete nextGrades[update.itemId];
+          } else {
+            nextGrades[update.itemId] = update.grade;
+          }
+        }
+        return { ...current, grades: nextGrades };
+      });
+      dispatch(removeStudent({ studentUid }));
+      setDraft({});
+      setErrors({});
+      setFeedback(
+        updates.length === 1 ? "1 calificación guardada" : `${updates.length} calificaciones guardadas`
+      );
+    } else if (result.error.type === "invalidGrade") {
+      setFeedback(`Las notas deben estar entre ${result.error.min} y ${result.error.max}`);
+    } else {
+      setFeedback("No se pudieron guardar las calificaciones");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    session.courseId,
+    studentUid,
+    uiState,
+    draft,
+    pendingForStudent,
+    dirtyCount,
+    pendingCount,
+    hasErrors,
+    saving,
+    dispatch,
+  ]);
+
+  return {
+    uiState,
+    feedback,
+    draft,
+    pendingForStudent,
+    errors,
+    dirtyCount,
+    pendingCount,
+    hasErrors,
+    saving,
+    updateValue,
+    saveHere,
+    stageAndContinue,
+    discard,
+  };
 }

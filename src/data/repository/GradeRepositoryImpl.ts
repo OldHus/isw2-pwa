@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 import type { GradeRepository } from "../../domain/repository/GradeRepository";
-import type { GradeError, GradeItem, StudentGrades } from "../../domain/model/GradeModels";
+import type { GradeCellUpdate, GradeError, GradeItem, StudentGrades } from "../../domain/model/GradeModels";
 import { GradeItemType } from "../../domain/model/GradeModels";
 import { success, failure, type AppResult } from "../../domain/model/Result";
 import type { CrashReporter } from "../../domain/service/CrashReporter";
@@ -223,6 +223,43 @@ export class GradeRepositoryImpl implements GradeRepository {
     } catch (error) {
       this.crashReporter.recordException(error);
       return failure(unknownGradeError(error, "No se pudieron cargar las calificaciones del curso"));
+    }
+  }
+
+  async setManyStudentGrades(
+    courseId: string,
+    updates: GradeCellUpdate[]
+  ): Promise<AppResult<void, GradeError>> {
+    try {
+      if (updates.length === 0) {
+        return success(undefined);
+      }
+
+      const byStudent = new Map<string, Record<string, number | ReturnType<typeof deleteField>>>();
+      for (const update of updates) {
+        let entry = byStudent.get(update.studentUid);
+        if (!entry) {
+          entry = {};
+          byStudent.set(update.studentUid, entry);
+        }
+        entry[update.itemId] = update.grade === null ? deleteField() : update.grade;
+      }
+
+      const entries = Array.from(byStudent.entries());
+      const BATCH_LIMIT = 400;
+      for (let i = 0; i < entries.length; i += BATCH_LIMIT) {
+        const batch = writeBatch(db);
+        for (const [studentUid, grades] of entries.slice(i, i + BATCH_LIMIT)) {
+          const studentDocRef = doc(db, GRADES_COLLECTION, courseId, STUDENTS_SUBCOLLECTION, studentUid);
+          batch.set(studentDocRef, { [GRADES_FIELD]: grades }, { merge: true });
+        }
+        await batch.commit();
+      }
+
+      return success(undefined);
+    } catch (error) {
+      this.crashReporter.recordException(error);
+      return failure(unknownGradeError(error, "No se pudieron guardar las calificaciones"));
     }
   }
 }

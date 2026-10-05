@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { container } from "../../../../di/container";
-import { useAppSelector } from "../../../../store/hooks";
-import type { GradeItemTypeValue } from "../../../../domain/model/GradeModels";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import { clearAllDrafts } from "../../../../store/slices/gradesDraftSlice";
+import type { GradeCellUpdate, GradeItemTypeValue } from "../../../../domain/model/GradeModels";
 import type { TeacherGradesUiState } from "../TeacherGradesUiState";
 
 function sortStudents<T extends { name: string; email: string }>(students: T[]): T[] {
@@ -12,8 +13,11 @@ function sortStudents<T extends { name: string; email: string }>(students: T[]):
 
 export function useTeacherGradesViewModel() {
   const session = useAppSelector((state) => state.session);
+  const pending = useAppSelector((state) => state.gradesDraft.pending);
+  const dispatch = useAppDispatch();
   const [uiState, setUiState] = useState<TeacherGradesUiState>({ status: "loading" });
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [savingPending, setSavingPending] = useState(false);
 
   const load = useCallback(async () => {
     if (!session.courseId) {
@@ -125,5 +129,58 @@ export function useTeacherGradesViewModel() {
 
   const consumeFeedback = useCallback(() => setFeedback(null), []);
 
-  return { uiState, feedback, addItem, renameItem, countStudentsGraded, deleteItem, consumeFeedback };
+  const totalPendingCells = Object.values(pending).reduce(
+    (acc, byItem) => acc + Object.keys(byItem).length,
+    0
+  );
+  const totalPendingStudents = Object.keys(pending).length;
+
+  const discardAllPending = useCallback(() => {
+    dispatch(clearAllDrafts());
+    setFeedback("Cambios pendientes descartados");
+  }, [dispatch]);
+
+  const saveAllPending = useCallback(async () => {
+    if (!session.courseId || totalPendingCells === 0 || savingPending) return;
+    const updates: GradeCellUpdate[] = [];
+    for (const [studentUid, byItem] of Object.entries(pending)) {
+      for (const [itemId, grade] of Object.entries(byItem)) {
+        updates.push({ studentUid, itemId, grade: grade as number | null });
+      }
+    }
+    if (updates.length === 0) return;
+    setSavingPending(true);
+    const result = await container.setManyStudentGradesUseCase.execute(session.courseId, updates);
+    setSavingPending(false);
+    if (result.success) {
+      container.analyticsReporter.logEvent("grades_batch_saved", {
+        course_id: session.courseId,
+        count: updates.length,
+      });
+      dispatch(clearAllDrafts());
+      setFeedback(
+        updates.length === 1 ? "1 calificación guardada" : `${updates.length} calificaciones guardadas`
+      );
+    } else if (result.error.type === "invalidGrade") {
+      setFeedback(`Las notas deben estar entre ${result.error.min} y ${result.error.max}`);
+    } else {
+      setFeedback("No se pudieron guardar las calificaciones");
+    }
+  }, [session.courseId, pending, totalPendingCells, savingPending, dispatch]);
+
+  return {
+    uiState,
+    feedback,
+    addItem,
+    renameItem,
+    countStudentsGraded,
+    deleteItem,
+    consumeFeedback,
+    pending,
+    totalPendingCells,
+    totalPendingStudents,
+    savingPending,
+    saveAllPending,
+    discardAllPending,
+  };
 }

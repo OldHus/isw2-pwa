@@ -24,10 +24,22 @@ interface ZoomedPhoto {
 }
 
 export function TeacherGradesScreen() {
-  const { uiState, feedback, addItem, renameItem, countStudentsGraded, deleteItem } =
-    useTeacherGradesViewModel();
+  const {
+    uiState,
+    feedback,
+    addItem,
+    renameItem,
+    countStudentsGraded,
+    deleteItem,
+    pending,
+    totalPendingCells,
+    totalPendingStudents,
+    savingPending,
+    saveAllPending,
+    discardAllPending,
+  } = useTeacherGradesViewModel();
   const [showAddItemDialog, setShowAddItemDialog] = useState(false);
-  
+
   const [zoomedPhoto, setZoomedPhoto] = useState<ZoomedPhoto | null>(null);
 
   return (
@@ -102,21 +114,59 @@ export function TeacherGradesScreen() {
                 Estudiantes
               </h2>
 
+              {totalPendingCells > 0 && (
+                <div className={styles.toolbar} role="region" aria-label="Guardar cambios pendientes">
+                  <span className={styles.dirtyCount} aria-live="polite">
+                    {totalPendingCells === 1
+                      ? `1 cambio pendiente en ${totalPendingStudents} estudiante`
+                      : `${totalPendingCells} cambios pendientes en ${totalPendingStudents} ${totalPendingStudents === 1 ? "estudiante" : "estudiantes"}`}
+                  </span>
+                  <div className={styles.toolbarActions}>
+                    <button
+                      type="button"
+                      className={styles.discardButton}
+                      onClick={discardAllPending}
+                      disabled={savingPending}
+                    >
+                      Descartar todo
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.saveButton}
+                      onClick={saveAllPending}
+                      disabled={savingPending}
+                    >
+                      {savingPending ? "Guardando…" : `Guardar todo (${totalPendingCells})`}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {uiState.students.length === 0 ? (
                 <p className={styles.emptyState}>Aún no hay estudiantes inscritos en este curso.</p>
               ) : (
                 <ul className={styles.studentList}>
-                  {uiState.students.map((student) => (
-                    <li key={student.uid}>
-                      <Link to={buildGradesStudentEditPath(student.uid)} className={styles.studentCard}>
-                        <StudentAvatar student={student} onZoom={setZoomedPhoto} />
-                        <span className={styles.studentInfo}>
-                          <span className={styles.studentName}>{student.name || student.email}</span>
-                          <span className={styles.studentEmail}>{student.email}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
+                  {uiState.students.map((student) => {
+                    const pendingCount = Object.keys(pending[student.uid] ?? {}).length;
+                    return (
+                      <li key={student.uid}>
+                        <Link to={buildGradesStudentEditPath(student.uid)} className={styles.studentCard}>
+                          <StudentAvatar student={student} onZoom={setZoomedPhoto} />
+                          <span className={styles.studentInfo}>
+                            <span className={styles.studentNameRow}>
+                              <span className={styles.studentName}>{student.name || student.email}</span>
+                              {pendingCount > 0 && (
+                                <span className={styles.pendingBadge} aria-label={`${pendingCount} cambios pendientes`}>
+                                  {pendingCount} pendiente{pendingCount === 1 ? "" : "s"}
+                                </span>
+                              )}
+                            </span>
+                            <span className={styles.studentEmail}>{student.email}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </section>
