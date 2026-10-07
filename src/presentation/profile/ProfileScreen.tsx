@@ -1,16 +1,20 @@
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
-import { Camera, Bell, BellOff } from "lucide-react";
+import { Camera, BadgeCheck, Bell, BellOff } from "lucide-react";
 import { AppShell } from "../shell/AppShell";
 import { useProfileViewModel } from "./hooks/useProfileViewModel";
 import { useCourseNotifications } from "./hooks/useCourseNotifications";
 import { Avatar } from "../common/Avatar";
 import { ProfilePhotoCropDialog } from "./ProfilePhotoCropDialog";
+import { Particles } from "./shared/Particles";
+import { TextReveal } from "./shared/TextReveal";
+import { useTheme } from "../theme/ThemeContext";
 import { UserRole } from "../../store/slices/sessionSlice";
 import styles from "./ProfileScreen.module.scss";
 
 export function ProfileScreen() {
   const { session, uiState, uploadPhoto, removePhoto } = useProfileViewModel();
   const notifications = useCourseNotifications();
+  const { theme } = useTheme();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [pendingCropFile, setPendingCropFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,6 +27,7 @@ export function ProfileScreen() {
 
   const isLoading = uiState.status === "loading";
   const hasCustomPhoto = Boolean(previewUrl) || Boolean(session.photoUrl);
+  const isTeacher = session.role === UserRole.TEACHER;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -54,11 +59,36 @@ export function ProfileScreen() {
 
   return (
     <AppShell>
+      <Particles
+        className={styles.particlesFull}
+        quantity={60}
+        color={theme === "dark" ? "#4cc9f0" : "#0b84b8"}
+      />
       <div className={styles.screen}>
-        <h1 className={styles.title}>Mi perfil</h1>
+        <div className={styles.cover} aria-hidden="true">
+          <span className={styles.coverOrb1} />
+          <span className={styles.coverOrb2} />
+          <div className={styles.coverText}>
+            <h1 className={styles.title}>Mi perfil</h1>
+            <p className={styles.subtitle}>Tu identidad en el aula</p>
+          </div>
+        </div>
 
-        <div className={styles.photoBlock}>
-          <Avatar photoUrl={displayUrl} role={session.role} name={session.name} size={96} />
+        <section className={`${styles.card} ${styles.identityCard}`} aria-label="Foto de perfil">
+          <div className={styles.identityRow}>
+            <span className={styles.avatarRing}>
+              <Avatar photoUrl={displayUrl} role={session.role} name={session.name} size={96} />
+            </span>
+            <div className={styles.identityInfo}>
+              <p className={styles.name}>
+                <TextReveal text={session.name && session.name.trim() ? session.name : "—"} />
+              </p>
+              <span className={`${styles.roleBadge} ${isTeacher ? styles.roleTeacher : styles.roleStudent}`}>
+                <BadgeCheck size={14} aria-hidden="true" />
+                {isTeacher ? "Docente" : "Estudiante"}
+              </span>
+            </div>
+          </div>
 
           <div className={styles.photoActions}>
             <button
@@ -84,65 +114,41 @@ export function ProfileScreen() {
             onChange={handleFileChange}
             disabled={isLoading}
           />
-        </div>
+          <p className={styles.hint}>JPG · PNG · WEBP · máx 5 MB · con recorte</p>
+        </section>
 
-        <div className={styles.info}>
-          <p className={styles.name}>{session.name ?? "—"}</p>
-          <p className={styles.role}>{session.role === UserRole.TEACHER ? "Docente" : "Estudiante"}</p>
-        </div>
-
-        <div className={styles.notificationsBlock}>
-          <h2 className={styles.notificationsTitle}>Notificaciones</h2>
-
-          {notifications.permission === "unsupported" && (
-            <p className={styles.notificationsHint}>Tu navegador no soporta notificaciones push.</p>
+        <section className={styles.card} aria-labelledby="notifications-heading">
+          <h2 id="notifications-heading" className={styles.cardTitle}>
+            <Bell size={18} aria-hidden="true" />
+            Notificaciones
+          </h2>
+          {notifications.subscribed ? (
+            <button
+              type="button"
+              className={styles.notifyButton}
+              onClick={notifications.deactivate}
+              disabled={notifications.status === "requesting"}
+            >
+              <BellOff size={16} aria-hidden="true" />
+              Desactivar notificaciones
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`${styles.notifyButton} ${styles.notifyPrimary}`}
+              onClick={notifications.activate}
+              disabled={notifications.status === "requesting"}
+            >
+              <Bell size={16} aria-hidden="true" />
+              {notifications.status === "requesting" ? "Activando..." : "Activar notificaciones"}
+            </button>
           )}
-
-          {notifications.permission === "denied" && (
-            <p className={styles.notificationsHint}>
-              Bloqueaste las notificaciones para este sitio. Para activarlas, habilítalas desde la configuración de
-              tu navegador.
-            </p>
-          )}
-
-          {notifications.permission !== "unsupported" && notifications.permission !== "denied" && (
-            <>
-              {notifications.subscribed ? (
-                <div className={styles.notificationsActive}>
-                  <span className={styles.notificationsActiveLabel}>
-                    <Bell size={16} aria-hidden="true" />
-                    Notificaciones activadas
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.notificationsToggleButton}
-                    onClick={notifications.deactivate}
-                    disabled={notifications.status === "requesting"}
-                  >
-                    <BellOff size={16} aria-hidden="true" />
-                    Desactivar
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className={styles.notificationsToggleButton}
-                  onClick={notifications.activate}
-                  disabled={notifications.status === "requesting"}
-                >
-                  <Bell size={16} aria-hidden="true" />
-                  {notifications.status === "requesting" ? "Activando..." : "Activar notificaciones"}
-                </button>
-              )}
-            </>
-          )}
-
           {notifications.status === "error" && notifications.errorMessage && (
-            <p role="alert" className={styles.notificationsError}>
+            <p role="alert" className={styles.notifyError}>
               {notifications.errorMessage}
             </p>
           )}
-        </div>
+        </section>
 
         {uiState.status === "error" && (
           <p role="alert" className={styles.error}>

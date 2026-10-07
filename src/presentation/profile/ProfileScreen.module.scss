@@ -1,24 +1,205 @@
 @use "../../styles/tokens" as *;
 
 .screen {
-  padding: 32px 24px 48px;
+  position: relative;
+  z-index: 1;
+  padding: 0 24px 48px;
   font-family: $font-body;
-  max-width: 480px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.particlesFull {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+.cover,
+.card,
+.error,
+.success {
+  position: relative;
+  z-index: 1;
+}
+
+.cover {
+  position: relative;
+  overflow: hidden;
+  margin: 0 -24px 0;
+  padding: 36px 24px 72px;
+  background: linear-gradient(120deg, $accent-primary 0%, $primary-container 135%);
+  border-radius: 0 0 28px 28px;
+}
+
+.coverOrb1,
+.coverOrb2 {
+  position: absolute;
+  border-radius: 50%;
+  background: $on-accent-primary;
+  pointer-events: none;
+}
+
+.coverOrb1 {
+  width: 220px;
+  height: 220px;
+  right: -60px;
+  top: -80px;
+  opacity: 0.16;
+}
+
+.coverOrb2 {
+  width: 140px;
+  height: 140px;
+  right: 120px;
+  bottom: -70px;
+  opacity: 0.1;
+}
+
+.coverText {
+  position: relative;
 }
 
 .title {
   font-family: $font-display;
-  color: $text-primary;
-  font-size: 24px;
+  color: $on-accent-primary;
+  font-size: 28px;
   font-weight: 700;
-  margin-bottom: 24px;
+  margin: 0;
 }
 
-.photoBlock {
+.subtitle {
+  color: $on-accent-primary;
+  opacity: 0.85;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+.card {
+  background: $bg-surface-elevated;
+  border: 1px solid $outline;
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-elevated);
+}
+
+.identityCard {
+  margin-top: -44px;
+  position: relative;
+  overflow: hidden;
+  padding-top: 26px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $accent-primary, $success);
+  }
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: $font-display;
+  color: $accent-primary;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.identityRow {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.avatarRing {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $accent-primary, $success);
+  box-shadow: var(--shadow-elevated);
+}
+
+.identityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.name {
+  color: $text-primary;
+  font-family: $font-display;
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.roleTeacher {
+  background: $accent-primary;
+  color: $on-accent-primary;
+  box-shadow: var(--shadow-elevated);
+}
+
+.roleStudent {
+  background: $success;
+  color: $on-accent-primary;
+  box-shadow: var(--shadow-elevated);
+}
+
+.hint {
+  color: $text-secondary;
+  font-size: 12px;
+  margin: 12px 0 0;
+}
+
+.infoRows {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.infoLabel {
+  color: $text-secondary;
+  font-size: 13px;
+  margin: 0;
+}
+
+.infoValue {
+  color: $text-primary;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  text-align: right;
 }
 
 .photo {
@@ -44,47 +225,50 @@
 
 .photoActions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
 }
 
 .changeButton {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 11px 20px;
   border-radius: 500px;
-  border: 1px solid $outline;
-  background: transparent;
-  color: $text-primary;
+  border: none;
+  background: linear-gradient(135deg, $accent-primary 0%, $success 135%);
+  color: $on-accent-primary;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  box-shadow: var(--shadow-elevated);
+  transition: transform 0.15s ease;
 
   &:hover:not(:disabled) {
-    border-color: $accent-primary;
+    transform: translateY(-1px);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
   }
 }
 
 .removeButton {
-  padding: 4px 8px;
-  margin-left: 4px;
-  border: none;
+  padding: 10px 16px;
+  border-radius: 500px;
+  border: 1px solid $danger;
   background: transparent;
   color: $danger;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    text-decoration: underline;
+    background: $primary-container;
   }
 
   &:disabled {
@@ -102,89 +286,42 @@
   display: none;
 }
 
-.info {
-  margin-bottom: 16px;
-}
-
-.name {
-  color: $text-primary;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.role {
-  color: $text-secondary;
-  font-size: 13px;
-}
-
 .error {
   color: $danger;
+  background: $bg-surface;
+  border: 1px solid $danger;
+  border-radius: 14px;
+  padding: 12px 16px;
   font-size: 13px;
+  font-weight: 600;
 }
 
 .success {
-  color: $success;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.notificationsBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 16px;
-  border: 1px solid $outline;
+  color: $on-primary-container;
+  background: $primary-container;
+  border: 1px solid $accent-primary;
   border-radius: 14px;
-}
-
-.notificationsTitle {
-  font-family: $font-display;
-  color: $text-primary;
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.notificationsHint {
-  color: $text-secondary;
-  font-size: 13px;
-  margin: 0;
-}
-
-.notificationsActive {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.notificationsActiveLabel {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: $success;
+  padding: 12px 16px;
   font-size: 13px;
   font-weight: 600;
 }
 
-.notificationsToggleButton {
+.notifyButton {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 11px 20px;
   border-radius: 500px;
   border: 1px solid $outline;
   background: transparent;
   color: $text-primary;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 
   &:hover:not(:disabled) {
-    border-color: $accent-primary;
+    transform: translateY(-1px);
   }
 
   &:disabled {
@@ -198,8 +335,15 @@
   }
 }
 
-.notificationsError {
+.notifyPrimary {
+  border: none;
+  background: linear-gradient(135deg, $accent-primary 0%, $success 135%);
+  color: $on-accent-primary;
+  box-shadow: var(--shadow-elevated);
+}
+
+.notifyError {
   color: $danger;
   font-size: 13px;
-  margin: 0;
+  margin: 12px 0 0;
 }
