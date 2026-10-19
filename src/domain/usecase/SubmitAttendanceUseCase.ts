@@ -21,9 +21,10 @@ export class SubmitAttendanceUseCase {
     if (Date.now() > session.expiresAt) {
       return failure({ type: "sessionExpired" });
     }
-    if (enteredCode.trim() !== session.code) {
+    const code = enteredCode.trim();
+    if (code.length === 0) {
       return failure({ type: "invalidCode" });
     }
-    return this.attendanceRepository.submitAttendance(courseId, session.id);
+    return this.attendanceRepository.submitAttendance(courseId, session.id, code);
   }
 }

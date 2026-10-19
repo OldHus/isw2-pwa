@@ -74,7 +74,8 @@ export function useTeacherAttendanceViewModel(courseId: string) {
         },
         (error) => {
           setUiState({ type: "error", message: mapAttendanceErrorMessage(error) });
-        }
+        },
+        true
       );
     }
 

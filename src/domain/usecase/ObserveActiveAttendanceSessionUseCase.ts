@@ -11,8 +11,9 @@ export class ObserveActiveAttendanceSessionUseCase {
   execute(
     courseId: string,
     onChange: (session: AttendanceSession | null) => void,
-    onError?: (error: AttendanceError) => void
+    onError?: (error: AttendanceError) => void,
+    includeCode = false
   ): () => void {
-    return this.attendanceRepository.observeActiveSession(courseId, onChange, onError);
+    return this.attendanceRepository.observeActiveSession(courseId, onChange, onError, includeCode);
   }
 }

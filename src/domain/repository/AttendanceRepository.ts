@@ -26,12 +26,17 @@ export interface AttendanceRepository {
   observeActiveSession(
     courseId: string,
     onChange: (session: AttendanceSession | null) => void,
-    onError?: (error: AttendanceError) => void
+    onError?: (error: AttendanceError) => void,
+    includeCode?: boolean
   ): () => void;
 
   //Student
 
-  submitAttendance(courseId: string, sessionId: string): Promise<AppResult<void, AttendanceError>>;
+  submitAttendance(
+    courseId: string,
+    sessionId: string,
+    code: string
+  ): Promise<AppResult<void, AttendanceError>>;
 
   hasSubmittedAttendance(
     courseId: string,

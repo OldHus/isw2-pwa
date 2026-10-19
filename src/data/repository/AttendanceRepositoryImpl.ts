@@ -1,3 +1,4 @@
+import { FirebaseError } from "firebase/app";
 import {
   collection,
   doc,
@@ -12,7 +13,13 @@ import {
   writeBatch,
   Timestamp,
 } from "firebase/firestore";
-import type { CollectionReference, DocumentData, DocumentSnapshot, QueryDocumentSnapshot } from "firebase/firestore";
+import type {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
 
 import { auth, db } from "../firebase/config";
 import type { AttendanceError, AttendanceRecord, AttendanceSession } from "../../domain/model/AttendanceModels";
@@ -24,6 +31,8 @@ import type { AppResult } from "../../domain/model/Result";
 const COURSES_COLLECTION = "cursos";
 const SESSIONS_SUBCOLLECTION = "sesionesAsistencia";
 const REGISTRATIONS_SUBCOLLECTION = "registros";
+const PRIVATE_SUBCOLLECTION = "privado";
+const CODE_DOCUMENT = "clave";
 
 const CODE_FIELD = "codigo";
 const ACTIVE_FIELD = "activa";
@@ -62,6 +71,7 @@ function toAttendanceRecord(snapshot: DocumentSnapshot | QueryDocumentSnapshot):
 
 export class AttendanceRepositoryImpl implements AttendanceRepository {
   private crashReporter: CrashReporter;
+  private sessionCodes = new Map<string, string>();
 
   constructor(crashReporter: CrashReporter) {
     this.crashReporter = crashReporter;
@@ -89,13 +99,14 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       const expiresAt = new Timestamp(now.seconds + durationMinutes * 60, now.nanoseconds);
 
       const data: DocumentData = {
-        [CODE_FIELD]: code,
         [ACTIVE_FIELD]: true,
         [DURATION_FIELD]: durationMinutes,
         [CREATED_AT_FIELD]: now,
         [EXPIRES_AT_FIELD]: expiresAt,
       };
       batch.set(newDocRef, data);
+      batch.set(this.codeDocument(courseId, newDocRef.id), { [CODE_FIELD]: code });
+      this.sessionCodes.set(newDocRef.id, code);
       await batch.commit();
 
       return success({
@@ -160,16 +171,42 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
   observeActiveSession(
     courseId: string,
     onChange: (session: AttendanceSession | null) => void,
-    onError?: (error: AttendanceError) => void
+    onError?: (error: AttendanceError) => void,
+    includeCode = false
   ): () => void {
+    let latestSessionId: string | null = null;
     const activeQuery = query(this.sessionsCollection(courseId), where(ACTIVE_FIELD, "==", true), limit(1));
+
     return onSnapshot(
       activeQuery,
       (snapshot) => {
-        if ("docs" in snapshot) {
-          const first = snapshot.docs[0];
-          onChange(first ? toAttendanceSession(first) : null);
+        if (!("docs" in snapshot)) return;
+
+        const first = snapshot.docs[0];
+        const session = first ? toAttendanceSession(first) : null;
+        latestSessionId = session?.id ?? null;
+
+        if (!session || !includeCode || session.code) {
+          onChange(session);
+          return;
         }
+
+        const cachedCode = this.sessionCodes.get(session.id);
+        if (cachedCode) {
+          onChange({ ...session, code: cachedCode });
+          return;
+        }
+
+        getDoc(this.codeDocument(courseId, session.id))
+          .then((codeSnapshot) => {
+            const code = (codeSnapshot.data()?.[CODE_FIELD] as string | undefined) ?? "";
+            if (code) this.sessionCodes.set(session.id, code);
+            if (latestSessionId === session.id) onChange({ ...session, code });
+          })
+          .catch((error) => {
+            this.crashReporter.recordException(error);
+            if (latestSessionId === session.id) onChange(session);
+          });
       },
       (error) => {
         this.crashReporter.recordException(error);
@@ -180,7 +217,11 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
 
   //Student
 
-  async submitAttendance(courseId: string, sessionId: string): Promise<AppResult<void, AttendanceError>> {
+  async submitAttendance(
+    courseId: string,
+    sessionId: string,
+    code: string
+  ): Promise<AppResult<void, AttendanceError>> {
     const studentUid = auth.currentUser?.uid;
     if (!studentUid) {
       return failure({ type: "unknown", message: "Usuario no autenticado" });
@@ -194,9 +235,15 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
         return failure({ type: "alreadyRegistered" });
       }
 
-      await setDoc(registrationRef, { [REGISTERED_AT_FIELD]: Timestamp.now() });
+      await setDoc(registrationRef, {
+        [REGISTERED_AT_FIELD]: Timestamp.now(),
+        [CODE_FIELD]: code,
+      });
       return success(undefined);
     } catch (e) {
+      if (e instanceof FirebaseError && e.code === "permission-denied") {
+        return failure({ type: "invalidCode" });
+      }
       this.crashReporter.recordException(e);
       return failure(toUnknownError(e, "No se pudo registrar tu asistencia"));
     }
@@ -235,6 +282,18 @@ export class AttendanceRepositoryImpl implements AttendanceRepository {
       SESSIONS_SUBCOLLECTION,
       sessionId,
       REGISTRATIONS_SUBCOLLECTION
+    );
+  }
+
+  private codeDocument(courseId: string, sessionId: string): DocumentReference {
+    return doc(
+      db,
+      COURSES_COLLECTION,
+      courseId,
+      SESSIONS_SUBCOLLECTION,
+      sessionId,
+      PRIVATE_SUBCOLLECTION,
+      CODE_DOCUMENT
     );
   }
 }

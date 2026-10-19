@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, limit, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, where, writeBatch } from "firebase/firestore";
 import { auth, db } from "../firebase/config";
 import { uploadProfilePhotoFile } from "../storage/uploadProfilePhotoFile";
 import type { CourseRepository } from "../../domain/repository/CourseRepository";
@@ -9,6 +9,7 @@ import type { CrashReporter } from "../../domain/service/CrashReporter";
 
 const COURSES_COLLECTION = "cursos";
 const USERS_COLLECTION = "usuarios";
+const ACCESS_CODES_COLLECTION = "codigosAcceso";
 const NAME_FIELD = "nombre";
 const ACCESS_CODE_FIELD = "codigoAcceso";
 const TEACHER_UID_FIELD = "docenteUid";
@@ -21,6 +22,10 @@ const STUDENT_ROLE = "estudiante";
 
 const ACCESS_CODE_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const ACCESS_CODE_LENGTH = 6;
+
+function isValidCodeId(code: string): boolean {
+  return code.length > 0 && !code.includes("/") && code !== "." && code !== "..";
+}
 
 export class CourseRepositoryImpl implements CourseRepository {
   private crashReporter: CrashReporter;
@@ -98,19 +103,22 @@ export class CourseRepositoryImpl implements CourseRepository {
         return failure({ type: "userNotAuthenticated" });
       }
 
-      const coursesRef = collection(db, COURSES_COLLECTION);
-      const codeQuery = query(coursesRef, where(ACCESS_CODE_FIELD, "==", code), limit(1));
-      const snapshot = await getDocs(codeQuery);
-      const courseDoc = snapshot.docs[0];
-
-      if (!courseDoc) {
+      const normalizedCode = code.trim();
+      if (!isValidCodeId(normalizedCode)) {
         return failure({ type: "invalidCode" });
       }
 
-      const courseId = courseDoc.id;
+      const codeDoc = await getDoc(doc(db, ACCESS_CODES_COLLECTION, normalizedCode));
+      const courseIdValue = codeDoc.exists() ? codeDoc.data()[COURSE_ID_FIELD] : undefined;
+      const courseId = typeof courseIdValue === "string" ? courseIdValue.trim() : "";
+
+      if (!courseId) {
+        return failure({ type: "invalidCode" });
+      }
+
       const name = currentUser.displayName ?? "";
-      const photoUrl = photoFile 
-      ? await uploadProfilePhotoFile(currentUser.uid, photoFile) : "";
+      const photoUrl = photoFile
+        ? await uploadProfilePhotoFile(currentUser.uid, photoFile) : "";
 
       const userProfile = {
         [NAME_FIELD]: name,
@@ -118,6 +126,7 @@ export class CourseRepositoryImpl implements CourseRepository {
         [PHOTO_URL_FIELD]: photoUrl,
         [ROLE_FIELD]: STUDENT_ROLE,
         [COURSE_ID_FIELD]: courseId,
+        [ACCESS_CODE_FIELD]: normalizedCode,
       };
 
       await setDoc(doc(db, USERS_COLLECTION, currentUser.uid), userProfile);
@@ -134,10 +143,27 @@ export class CourseRepositoryImpl implements CourseRepository {
 
   async regenerateAccessCode(courseId: string): Promise<AppResult<string, CourseError>> {
     try {
+      const courseRef = doc(db, COURSES_COLLECTION, courseId);
+      const courseDoc = await getDoc(courseRef);
+      const previousCode = courseDoc.exists()
+        ? ((courseDoc.data()[ACCESS_CODE_FIELD] as string | undefined) ?? "").trim()
+        : "";
+
       const newCode = this.generateAccessCode();
-      await updateDoc(doc(db, COURSES_COLLECTION, courseId), {
-        [ACCESS_CODE_FIELD]: newCode,
-      });
+      const batch = writeBatch(db);
+
+      batch.set(doc(db, ACCESS_CODES_COLLECTION, newCode), { [COURSE_ID_FIELD]: courseId });
+
+      if (isValidCodeId(previousCode) && previousCode !== newCode) {
+        const previousCodeDoc = await getDoc(doc(db, ACCESS_CODES_COLLECTION, previousCode));
+        if (previousCodeDoc.exists() && previousCodeDoc.data()[COURSE_ID_FIELD] === courseId) {
+          batch.delete(previousCodeDoc.ref);
+        }
+      }
+
+      batch.update(courseRef, { [ACCESS_CODE_FIELD]: newCode });
+      await batch.commit();
+
       return success(newCode);
     } catch (error) {
       this.crashReporter.recordException(error);
