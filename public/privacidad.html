@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e1117">
+    <title>Política de privacidad Ingesoft</title>
+    <meta name="description"
+        content="Política de privacidad de Ingesoft (Ingeniería de Software UNAL), la aplicación de apoyo académico para la asignatura Ingeniería de Software II, publicada en Google Play por Svape213.">
+    <link href="/icon_trans.png" rel="icon" type="image/png">
+    <link href="/icon-192.png" rel="apple-touch-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function () { try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t) } catch (e) { } })();
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root,
+        [data-theme="dark"] {
+            --color-surface: #0e1117;
+            --color-surface-container-low: #14171f;
+            --color-surface-container: #191d27;
+            --color-surface-container-high: #232838;
+            --color-on-surface: #f1f2f6;
+            --color-on-surface-variant: #9da6bf;
+            --color-outline: rgba(157, 166, 191, 0.2);
+            --color-primary: #4cc9f0;
+            --color-on-primary: #06131b;
+            --color-primary-container: rgba(76, 201, 240, 0.16);
+            --color-on-primary-container: #7ddcf6;
+            --color-error: #ff5c5c;
+            --shadow-elevated: none;
+            --nav-bg: rgba(14, 17, 23, 0.85);
+            --theme-toggle-x: 50%;
+            --theme-toggle-y: 50%;
+            color-scheme: dark
+        }
+
+        [data-theme="light"] {
+            --color-surface: #faf7f1;
+            --color-surface-container-low: #f5f1e7;
+            --color-surface-container: #efe9dd;
+            --color-surface-container-high: #ffffff;
+            --color-on-surface: #1c1a15;
+            --color-on-surface-variant: #6b6252;
+            --color-outline: rgba(45, 38, 25, 0.14);
+            --color-primary: #0b84b8;
+            --color-on-primary: #ffffff;
+            --color-primary-container: #d8f1fa;
+            --color-on-primary-container: #045d82;
+            --color-error: #d93636;
+            --shadow-elevated: 0 1px 3px rgba(45, 38, 25, 0.1);
+            --nav-bg: rgba(250, 247, 241, 0.85);
+            color-scheme: light
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+            font-size: 15px;
+            line-height: 1.7
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            body {
+                transition: background-color 0.25s ease, color 0.25s ease
+            }
+        }
+
+        ::view-transition-old(root) {
+            animation: none
+        }
+
+        ::view-transition-new(root) {
+            animation: theme-reveal 0.5s ease forwards
+        }
+
+        @keyframes theme-reveal {
+            from {
+                clip-path: circle(0% at var(--theme-toggle-x) var(--theme-toggle-y))
+            }
+
+            to {
+                clip-path: circle(150% at var(--theme-toggle-x) var(--theme-toggle-y))
+            }
+        }
+
+        button {
+            font: inherit
+        }
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.15s ease
+        }
+
+        a:hover {
+            color: var(--color-primary)
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 3px;
+            border-radius: 6px
+        }
+
+        ::selection {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container)
+        }
+
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        .nav-inner {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .nav-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-on-surface)
+        }
+
+        .nav-brand {
+            text-decoration: none
+        }
+
+        .nav-brand:hover {
+            text-decoration: none;
+            color: var(--color-primary)
+        }
+
+        .nav-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px
+        }
+
+        .nav-brand svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface-container);
+            color: var(--color-on-surface-variant);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease
+        }
+
+        .theme-btn:hover {
+            color: var(--color-primary);
+            background: var(--color-surface-container-high)
+        }
+
+        .theme-btn svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .t-sun {
+            display: none
+        }
+
+        [data-theme="light"] .t-sun {
+            display: block
+        }
+
+        [data-theme="light"] .t-moon {
+            display: none
+        }
+
+        .wrap {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 16px 64px
+        }
+
+        header.doc {
+            padding-bottom: 28px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 16px
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 6vw, 40px);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 14px
+        }
+
+        .lede {
+            font-size: 16px;
+            color: var(--color-on-surface-variant);
+            margin-bottom: 20px
+        }
+
+        .meta {
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-elevated);
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--color-on-surface-variant);
+            line-height: 1.9
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+            margin: 40px 0 12px
+        }
+
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 24px 0 8px
+        }
+
+        p {
+            margin-bottom: 14px
+        }
+
+        strong {
+            font-weight: 600
+        }
+
+        ul,
+        ol {
+            margin: 0 0 16px 22px
+        }
+
+        li {
+            margin-bottom: 8px
+        }
+
+        li::marker {
+            color: var(--color-primary)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 8px 0 16px;
+            font-size: 14px;
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--color-surface-container)
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: top;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        tr:last-child td {
+            border-bottom: none
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-on-surface-variant);
+            background: var(--color-surface-container-high)
+        }
+
+        td:first-child {
+            font-weight: 500;
+            white-space: nowrap
+        }
+
+        ol.steps {
+            list-style: none;
+            counter-reset: step;
+            margin-left: 0
+        }
+
+        ol.steps li {
+            counter-increment: step;
+            position: relative;
+            padding: 14px 16px 14px 60px;
+            margin-bottom: 10px;
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px
+        }
+
+        ol.steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 24px;
+            margin: 8px 0 10px;
+            border-radius: 500px;
+            background: var(--color-primary);
+            text-decoration: none;
+            color: var(--color-on-primary);
+            font-weight: 600;
+            transition: filter 0.2s ease, transform 0.2s ease
+        }
+
+        .cta:hover {
+            color: var(--color-on-primary);
+            transform: scale(1.02)
+        }
+
+        .cta:active {
+            transform: scale(0.98)
+        }
+
+        .fallback {
+            font-size: 13px;
+            color: var(--color-on-surface-variant)
+        }
+
+        .card {
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-elevated);
+            padding: 20px;
+            margin: 24px 0
+        }
+
+        .card h3 {
+            margin-top: 0
+        }
+
+        .card p:last-child {
+            margin-bottom: 0
+        }
+
+        footer {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-outline);
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: var(--color-on-surface-variant)
+        }
+
+        .legal-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 6px 10px;
+            margin-top: 8px
+        }
+
+        .legal-links a {
+            color: var(--color-on-surface-variant)
+        }
+
+        .legal-links a:hover {
+            color: var(--color-on-surface)
+        }
+
+        .legal-links span {
+            color: var(--color-outline)
+        }
+
+        footer p {
+            text-align: center;
+            margin: 0
+        }
+
+        @media (max-width: 560px) {
+            .wrap {
+                padding-top: 28px
+            }
+
+            td:first-child {
+                white-space: normal
+            }
+
+            th,
+            td {
+                padding: 10px 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg><img src="/icon_trans.png" alt="" class="nav-logo">Ingesoft</a>
+            <button class="theme-btn" id="themeToggle" type="button" aria-label="Cambiar tema">
+                <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+                <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="wrap">
+
+        <header class="doc">
+            <span class="eyebrow">Privacidad</span>
+            <h1>Política de privacidad</h1>
+            <p class="lede">Cómo se recogen, usan y protegen los datos personales en Ingesoft (Ingeniería de Software
+                UNAL), la aplicación de apoyo académico para la asignatura Ingeniería de Software II, disponible para
+                Android en Google Play y en la web en ingesoftun4l.com.</p>
+            <p class="meta">
+                Aplicación: Ingesoft — Android (Google Play) y web (ingesoftun4l.com)<br>
+                Desarrollador en Google Play: Svape213<br>
+                Responsable: Sergio Vargas Pedraza<br>
+                Contacto: <a href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a><br>
+                Vigente desde: 18 de octubre de 2026
+            </p>
+        </header>
+
+        <h2>1. Quién responde por tus datos</h2>
+        <p>El responsable del tratamiento de los datos personales recogidos por Ingesoft es Sergio Vargas Pedraza,
+            docente de la asignatura, actuando a título personal. Sergio Vargas Pedraza publica la aplicación en Google
+            Play con la cuenta de desarrollador <strong>Svape213</strong>. Puedes contactarlo en <a
+                href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a>.</p>
+        <p>Ingesoft se usa como material de apoyo en un curso de la Universidad Nacional de Colombia, pero no es un
+            producto oficial de la Universidad ni está desarrollada, respaldada o administrada por ella.</p>
+
+        <h2>2. Qué hace la aplicación</h2>
+        <p>Ingesoft permite a los estudiantes de la asignatura consultar el programa del curso y sus calificaciones,
+            registrar asistencia, gestionar el proyecto de aula en un tablero de equipo, leer y reaccionar a las
+            publicaciones del muro del curso, y participar en encuestas y quices en vivo durante la clase.</p>
+        <p>Para usarla inicias sesión con la cuenta de Google de tu correo institucional @unal.edu.co y te inscribes en
+            el curso con el código de acceso que te entrega el docente. Solo pueden usarla cuentas institucionales.</p>
+
+        <h2>3. Qué datos se recogen</h2>
+
+        <h3>Datos de tu cuenta institucional</h3>
+        <p>Al iniciar sesión con Google, la aplicación recibe de tu cuenta institucional:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Dato</th>
+                    <th>Para qué se usa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Correo institucional</td>
+                    <td>Verificar que el dominio es @unal.edu.co e identificarte ante el docente</td>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td>Identificarte dentro de la aplicación ante el docente, tu equipo y tus compañeros del curso</td>
+                </tr>
+                <tr>
+                    <td>Foto de perfil</td>
+                    <td>Mostrarla en tu perfil dentro de la aplicación. Es la foto de tu cuenta de Google o, en la
+                        versión web, una foto que decidas subir al inscribirte</td>
+                </tr>
+                <tr>
+                    <td>Identificador de cuenta</td>
+                    <td>Vincular de forma única tu sesión con tu información académica</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>La aplicación no accede a tu contraseña, ni al contenido de tu correo electrónico, ni a ningún otro servicio
+            de tu cuenta de Google.</p>
+
+        <h3>Datos académicos del curso</h3>
+        <ul>
+            <li>El curso al que te inscribiste, el código de acceso que usaste y tu rol (estudiante o docente)</li>
+            <li>Tus calificaciones en la asignatura</li>
+            <li>Tus registros de asistencia a clase, con fecha y hora</li>
+            <li>El equipo de proyecto al que perteneces y las tareas que propones o mueves en el tablero</li>
+            <li>Tus votos en encuestas</li>
+            <li>Tus respuestas a las preguntas del quiz, con la hora de respuesta y el puntaje obtenido</li>
+            <li>Tus reacciones a las publicaciones del muro del curso</li>
+        </ul>
+
+        <h3>Datos técnicos y de uso</h3>
+        <ul>
+            <li>Un identificador del dispositivo para enviarte notificaciones del curso</li>
+            <li>Informes de errores que incluyen modelo del dispositivo, versión del sistema operativo y detalles
+                técnicos de la falla, para corregir problemas de la aplicación</li>
+            <li>Datos de uso recogidos con Google Analytics para Firebase: pantallas que visitas y acciones como
+                registrar asistencia, votar o responder el quiz. Se asocian a un identificador aleatorio de la
+                instalación, no a tu nombre ni a tu correo, y se usan para entender cómo se usa la aplicación y
+                mejorarla</li>
+        </ul>
+        <p>Los informes de errores y los datos de uso no incluyen tu nombre ni tu correo.</p>
+
+        <h2>4. Qué no se recoge</h2>
+        <p>La aplicación no accede a tu ubicación, tus contactos, tu cámara, tu micrófono ni tus mensajes. Solo accede a
+            una imagen de tu dispositivo cuando tú la eliges expresamente, por ejemplo para tu foto de perfil en la
+            versión web. No recoge datos sensibles como origen racial o étnico, orientación sexual, convicciones
+            religiosas, afiliación política, ni datos de salud o biométricos.</p>
+        <p>Tus datos no se venden, ni se alquilan, ni se comparten con anunciantes. La aplicación no muestra publicidad.
+        </p>
+
+        <h2>5. Con quién se comparten</h2>
+        <p>Dentro del curso, la información se comparte así:</p>
+        <ul>
+            <li>El docente puede ver los datos de todos los estudiantes inscritos en el curso</li>
+            <li>Cada estudiante ve únicamente sus propias calificaciones y su propia asistencia</li>
+            <li>Los integrantes de un equipo de proyecto ven el nombre y la foto de perfil de sus compañeros de equipo,
+                y las tareas del proyecto compartido</li>
+            <li>Los estudiantes del curso pueden ver tu nombre junto a la opción por la que votaste en una encuesta</li>
+            <li>Cuando una pregunta del quiz se cierra, los estudiantes del curso pueden ver las respuestas y los
+                puntajes de esa pregunta. El docente puede proyectar en clase el podio con los mejores puntajes</li>
+            <li>Los estudiantes y el docente del curso pueden ver quién reaccionó a cada publicación del muro</li>
+        </ul>
+        <p>Fuera del curso, los datos se procesan y almacenan en <strong>Firebase</strong>, un servicio de Google LLC
+            que provee la autenticación, la base de datos, el almacenamiento de archivos, las notificaciones, los
+            informes de errores y la analítica de uso. La versión web se publica en Cloudflare, que solo entrega los
+            archivos de la página y no almacena tus datos académicos. Puedes consultar la <a
+                href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">política de
+                privacidad de Firebase</a> y la <a href="https://policies.google.com/privacy?hl=es" target="_blank"
+                rel="noopener">política de privacidad de Google</a>.</p>
+        <p>Los datos también podrán entregarse a autoridades competentes cuando exista una obligación legal de hacerlo.
+        </p>
+
+        <h2>6. Dónde se almacenan</h2>
+        <p>Los servidores de Firebase están ubicados fuera de Colombia. Esto implica una transferencia internacional de
+            datos personales hacia terceros países, amparada en la autorización que otorgas al aceptar esta política
+            antes de usar la aplicación. Google mantiene medidas de seguridad y cláusulas contractuales de protección de
+            datos para estas transferencias.</p>
+
+        <h2>7. Cuánto tiempo se conservan</h2>
+        <ul>
+            <li>Los datos académicos se conservan mientras el curso esté activo y hasta el cierre del semestre
+                correspondiente</li>
+            <li>Los informes de errores se conservan según los plazos que define Firebase, hasta 90 días</li>
+            <li>Los datos de uso se conservan según la configuración de retención de Google Analytics</li>
+            <li>Si solicitas la eliminación de tu cuenta, tus datos se borran en el plazo indicado en la sección
+                siguiente</li>
+        </ul>
+        <p>Algunos registros académicos pueden conservarse por fuera de la aplicación si existe una obligación
+            institucional de hacerlo, por ejemplo el reporte oficial de calificaciones ante la Universidad.</p>
+
+        <h2>8. Tus derechos</h2>
+        <p>De acuerdo con la Ley 1581 de 2012 y el Decreto 1074 de 2015, como titular de tus datos personales tienes
+            derecho a:</p>
+        <ul>
+            <li>Conocer qué datos tuyos se están tratando y con qué finalidad</li>
+            <li>Solicitar que se actualicen o se corrijan si están incompletos o son inexactos</li>
+            <li>Solicitar que se supriman, cuando no exista un deber legal o contractual de conservarlos</li>
+            <li>Revocar la autorización que diste para el tratamiento</li>
+            <li>Presentar quejas ante la Superintendencia de Industria y Comercio</li>
+        </ul>
+        <p>Para ejercer cualquiera de estos derechos, escribe a <a
+                href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a>. Tu solicitud recibirá respuesta en un
+            plazo máximo de diez días hábiles. Si necesitas eliminar tu cuenta de Ingesoft, sigue los pasos en <a
+                href="/eliminar-cuenta.html">ingesoftun4l.com/eliminar-cuenta</a>.</p>
+
+        <h2>9. Seguridad</h2>
+        <p>El acceso a la aplicación requiere autenticación con una cuenta institucional verificada. La información se
+            transmite cifrada y el acceso a cada dato está restringido por reglas de seguridad que verifican, en el
+            servidor, el rol y el curso de quien lo solicita. Ningún estudiante puede consultar las calificaciones ni la
+            asistencia de otro.</p>
+        <p>Ningún sistema es completamente infalible. Si detectas un problema de seguridad, escribe a <a
+                href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a>.</p>
+
+        <h2>10. Menores de edad</h2>
+        <p>La aplicación está dirigida a estudiantes universitarios inscritos en la asignatura. Si eres menor de 18
+            años, necesitas la autorización de tu padre, madre o representante legal para que tus datos sean tratados.
+            Escribe al correo de contacto para gestionarlo.</p>
+
+        <h2>11. Cambios a esta política</h2>
+        <p>Si esta política cambia, la versión actualizada se publicará en esta misma dirección con una nueva fecha de
+            vigencia. Los cambios que afecten de forma sustancial el tratamiento de tus datos se avisarán dentro de la
+            aplicación.</p>
+
+        <h2>12. Contacto</h2>
+        <p>Para cualquier pregunta, solicitud o reclamo relacionado con tus datos personales en Ingesoft, escribe a <a
+                href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a>.</p>
+
+        <footer>
+            <p>Ingesoft · Ingeniería de Software UNAL · Svape213</p>
+            <div class="legal-links"><a href="/">Inicio</a><span>·</span><a href="/eliminar-cuenta.html">Eliminar mi cuenta</a></div>
+        </footer>
+
+    </div>
+
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', function (event) {
+            var root = document.documentElement;
+            var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            var rect = event.currentTarget.getBoundingClientRect();
+            root.style.setProperty('--theme-toggle-x', (rect.left + rect.width / 2) + 'px');
+            root.style.setProperty('--theme-toggle-y', (rect.top + rect.height / 2) + 'px');
+            var apply = function () {
+                root.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next) } catch (e) { }
+            };
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (document.startViewTransition && !reduce) { document.startViewTransition(apply) } else { apply() }
+        });
+    </script>
+</body>
+
+</html>

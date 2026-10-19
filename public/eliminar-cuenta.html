@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e1117">
+    <title>Eliminar mi cuenta Ingesoft</title>
+    <meta name="description"
+        content="Solicita la eliminación de tu cuenta y de tus datos en Ingesoft (Ingeniería de Software UNAL), la aplicación de apoyo académico para la asignatura Ingeniería de Software II, publicada en Google Play por Svape213.">
+    <link href="/icon_trans.png" rel="icon" type="image/png">
+    <link href="/icon-192.png" rel="apple-touch-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function () { try { var t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t) } catch (e) { } })();
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root,
+        [data-theme="dark"] {
+            --color-surface: #0e1117;
+            --color-surface-container-low: #14171f;
+            --color-surface-container: #191d27;
+            --color-surface-container-high: #232838;
+            --color-on-surface: #f1f2f6;
+            --color-on-surface-variant: #9da6bf;
+            --color-outline: rgba(157, 166, 191, 0.2);
+            --color-primary: #4cc9f0;
+            --color-on-primary: #06131b;
+            --color-primary-container: rgba(76, 201, 240, 0.16);
+            --color-on-primary-container: #7ddcf6;
+            --color-error: #ff5c5c;
+            --shadow-elevated: none;
+            --nav-bg: rgba(14, 17, 23, 0.85);
+            --theme-toggle-x: 50%;
+            --theme-toggle-y: 50%;
+            color-scheme: dark
+        }
+
+        [data-theme="light"] {
+            --color-surface: #faf7f1;
+            --color-surface-container-low: #f5f1e7;
+            --color-surface-container: #efe9dd;
+            --color-surface-container-high: #ffffff;
+            --color-on-surface: #1c1a15;
+            --color-on-surface-variant: #6b6252;
+            --color-outline: rgba(45, 38, 25, 0.14);
+            --color-primary: #0b84b8;
+            --color-on-primary: #ffffff;
+            --color-primary-container: #d8f1fa;
+            --color-on-primary-container: #045d82;
+            --color-error: #d93636;
+            --shadow-elevated: 0 1px 3px rgba(45, 38, 25, 0.1);
+            --nav-bg: rgba(250, 247, 241, 0.85);
+            color-scheme: light
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background: var(--color-surface);
+            color: var(--color-on-surface);
+            font-size: 15px;
+            line-height: 1.7
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            body {
+                transition: background-color 0.25s ease, color 0.25s ease
+            }
+        }
+
+        ::view-transition-old(root) {
+            animation: none
+        }
+
+        ::view-transition-new(root) {
+            animation: theme-reveal 0.5s ease forwards
+        }
+
+        @keyframes theme-reveal {
+            from {
+                clip-path: circle(0% at var(--theme-toggle-x) var(--theme-toggle-y))
+            }
+
+            to {
+                clip-path: circle(150% at var(--theme-toggle-x) var(--theme-toggle-y))
+            }
+        }
+
+        button {
+            font: inherit
+        }
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.15s ease
+        }
+
+        a:hover {
+            color: var(--color-primary)
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 3px;
+            border-radius: 6px
+        }
+
+        ::selection {
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container)
+        }
+
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        .nav-inner {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 16px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .nav-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-on-surface)
+        }
+
+        .nav-brand {
+            text-decoration: none
+        }
+
+        .nav-brand:hover {
+            text-decoration: none;
+            color: var(--color-primary)
+        }
+
+        .nav-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px
+        }
+
+        .nav-brand svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--color-outline);
+            background: var(--color-surface-container);
+            color: var(--color-on-surface-variant);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease
+        }
+
+        .theme-btn:hover {
+            color: var(--color-primary);
+            background: var(--color-surface-container-high)
+        }
+
+        .theme-btn svg {
+            width: 18px;
+            height: 18px
+        }
+
+        .t-sun {
+            display: none
+        }
+
+        [data-theme="light"] .t-sun {
+            display: block
+        }
+
+        [data-theme="light"] .t-moon {
+            display: none
+        }
+
+        .wrap {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 16px 64px
+        }
+
+        header.doc {
+            padding-bottom: 28px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 16px
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(30px, 6vw, 40px);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 14px
+        }
+
+        .lede {
+            font-size: 16px;
+            color: var(--color-on-surface-variant);
+            margin-bottom: 20px
+        }
+
+        .meta {
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-elevated);
+            padding: 16px 20px;
+            font-size: 14px;
+            color: var(--color-on-surface-variant);
+            line-height: 1.9
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+            margin: 40px 0 12px
+        }
+
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 24px 0 8px
+        }
+
+        p {
+            margin-bottom: 14px
+        }
+
+        strong {
+            font-weight: 600
+        }
+
+        ul,
+        ol {
+            margin: 0 0 16px 22px
+        }
+
+        li {
+            margin-bottom: 8px
+        }
+
+        li::marker {
+            color: var(--color-primary)
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 8px 0 16px;
+            font-size: 14px;
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--color-surface-container)
+        }
+
+        th,
+        td {
+            text-align: left;
+            vertical-align: top;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-outline)
+        }
+
+        tr:last-child td {
+            border-bottom: none
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-on-surface-variant);
+            background: var(--color-surface-container-high)
+        }
+
+        td:first-child {
+            font-weight: 500;
+            white-space: nowrap
+        }
+
+        ol.steps {
+            list-style: none;
+            counter-reset: step;
+            margin-left: 0
+        }
+
+        ol.steps li {
+            counter-increment: step;
+            position: relative;
+            padding: 14px 16px 14px 60px;
+            margin-bottom: 10px;
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px
+        }
+
+        ol.steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-primary-container);
+            color: var(--color-on-primary-container);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 24px;
+            margin: 8px 0 10px;
+            border-radius: 500px;
+            background: var(--color-primary);
+            text-decoration: none;
+            color: var(--color-on-primary);
+            font-weight: 600;
+            transition: filter 0.2s ease, transform 0.2s ease
+        }
+
+        .cta:hover {
+            color: var(--color-on-primary);
+            transform: scale(1.02)
+        }
+
+        .cta:active {
+            transform: scale(0.98)
+        }
+
+        .fallback {
+            font-size: 13px;
+            color: var(--color-on-surface-variant)
+        }
+
+        .card {
+            background: var(--color-surface-container);
+            border: 1px solid var(--color-outline);
+            border-radius: 16px;
+            box-shadow: var(--shadow-elevated);
+            padding: 20px;
+            margin: 24px 0
+        }
+
+        .card h3 {
+            margin-top: 0
+        }
+
+        .card p:last-child {
+            margin-bottom: 0
+        }
+
+        footer {
+            margin-top: 56px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-outline);
+            font-size: 11.5px;
+            line-height: 1.5;
+            color: var(--color-on-surface-variant)
+        }
+
+        .legal-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 6px 10px;
+            margin-top: 8px
+        }
+
+        .legal-links a {
+            color: var(--color-on-surface-variant)
+        }
+
+        .legal-links a:hover {
+            color: var(--color-on-surface)
+        }
+
+        .legal-links span {
+            color: var(--color-outline)
+        }
+
+        footer p {
+            text-align: center;
+            margin: 0
+        }
+
+        @media (max-width: 560px) {
+            .wrap {
+                padding-top: 28px
+            }
+
+            td:first-child {
+                white-space: normal
+            }
+
+            th,
+            td {
+                padding: 10px 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg><img src="/icon_trans.png" alt="" class="nav-logo">Ingesoft</a>
+            <button class="theme-btn" id="themeToggle" type="button" aria-label="Cambiar tema">
+                <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+                <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="wrap">
+
+        <header class="doc">
+            <span class="eyebrow">Tu cuenta</span>
+            <h1>Eliminar mi cuenta</h1>
+            <p class="lede">Puedes pedir en cualquier momento que se elimine tu cuenta de Ingesoft (Ingeniería de
+                Software UNAL) y los datos asociados a ella, tanto si usas la aplicación de Android como la versión web.
+            </p>
+            <p class="meta">
+                Aplicación: Ingesoft — Android (Google Play) y web (ingesoftun4l.com)<br>
+                Desarrollador en Google Play: Svape213<br>
+                Responsable: Sergio Vargas Pedraza<br>
+                Contacto: <a href="mailto:sevargasp@unal.edu.co">sevargasp@unal.edu.co</a>
+            </p>
+        </header>
+
+        <h2>Solicitar la eliminación</h2>
+        <p>Escribe desde el mismo correo institucional con el que ingresas a Ingesoft. Es la forma de confirmar que la
+            solicitud es tuya.</p>
+
+        <ol class="steps">
+            <li>Abre tu correo institucional @unal.edu.co.</li>
+            <li>Envía un mensaje a <strong>sevargasp@unal.edu.co</strong> con el asunto «Eliminar mi cuenta de Ingesoft».
+            </li>
+            <li>Escribe en el mensaje tu nombre completo y el curso en el que estás inscrito.</li>
+        </ol>
+
+        <a class="cta"
+            href="mailto:sevargasp@unal.edu.co?subject=Eliminar%20mi%20cuenta%20de%20Ingesoft&amp;body=Solicito%20la%20eliminaci%C3%B3n%20de%20mi%20cuenta%20y%20de%20mis%20datos%20en%20Ingesoft.%0A%0ANombre%20completo%3A%20%0ACorreo%20institucional%3A%20%0ACurso%3A%20%0A">Escribir
+            el correo de solicitud</a>
+        <p class="fallback">Si el botón no abre tu aplicación de correo, envía el mensaje manualmente a
+            sevargasp@unal.edu.co.</p>
+
+        <h2>Qué se elimina</h2>
+        <p>Al procesar tu solicitud se borran de forma permanente:</p>
+        <ul>
+            <li>Tu cuenta de acceso a Ingesoft y tu perfil, con tu nombre, correo y foto</li>
+            <li>Tu inscripción en el curso y tu rol dentro de él</li>
+            <li>Tus registros de asistencia</li>
+            <li>Tus votos en encuestas</li>
+            <li>Tus respuestas del quiz y tu puntaje en el ranking</li>
+            <li>Tus reacciones a las publicaciones del muro</li>
+            <li>Tu participación en equipos y las tareas de proyecto a tu nombre</li>
+            <li>El identificador usado para enviarte notificaciones</li>
+        </ul>
+        <p>La eliminación es definitiva. No es una desactivación temporal y no se puede deshacer.</p>
+
+        <div class="card">
+            <h3>Qué se conserva y por qué</h3>
+            <p>Las calificaciones que ya fueron reportadas oficialmente a la Universidad se conservan por fuera de la
+                aplicación, porque hacen parte del registro académico institucional y existe el deber de mantenerlas.
+                Eliminar tu cuenta en Ingesoft no borra ni modifica tu historia académica ante la Universidad Nacional
+                de Colombia.</p>
+            <p>Los informes de errores y los datos de uso anónimos que ya se hayan enviado no están asociados a tu nombre
+                ni a tu correo, y se eliminan automáticamente según los plazos de Firebase y Google Analytics.</p>
+        </div>
+
+        <h2>Cuánto tarda</h2>
+        <p>La solicitud se procesa en un plazo máximo de diez días hábiles desde que se recibe. Recibirás una
+            confirmación por correo cuando la eliminación se haya completado.</p>
+
+        <h2>Qué pasa después</h2>
+        <p>Perderás el acceso a Ingesoft y a la información del curso que se consulta desde ella. Si vuelves a
+            necesitarla, puedes inscribirte de nuevo con el código de acceso del curso que te entregue el docente.</p>
+        <p>Eliminar tu cuenta de Ingesoft no elimina tu cuenta de Google ni afecta tu correo institucional.</p>
+
+        <h2>Otras solicitudes</h2>
+        <p>Si en lugar de eliminar tu cuenta quieres conocer, actualizar o corregir tus datos, escribe al mismo correo.
+            Puedes consultar todos tus derechos en la <a href="/privacidad.html">política de privacidad</a>.</p>
+
+        <footer>
+            <p>Ingesoft · Ingeniería de Software UNAL · Svape213</p>
+            <div class="legal-links"><a href="/">Inicio</a><span>·</span><a href="/privacidad.html">Política de privacidad</a></div>
+        </footer>
+
+    </div>
+
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', function (event) {
+            var root = document.documentElement;
+            var next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            var rect = event.currentTarget.getBoundingClientRect();
+            root.style.setProperty('--theme-toggle-x', (rect.left + rect.width / 2) + 'px');
+            root.style.setProperty('--theme-toggle-y', (rect.top + rect.height / 2) + 'px');
+            var apply = function () {
+                root.setAttribute('data-theme', next);
+                try { localStorage.setItem('theme', next) } catch (e) { }
+            };
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (document.startViewTransition && !reduce) { document.startViewTransition(apply) } else { apply() }
+        });
+    </script>
+</body>
+
+</html>

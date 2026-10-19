@@ -130,7 +130,8 @@ export function LoginScreen() {
       )}
 
       <p className={styles.privacyNotice}>
-        Al continuar, aceptas nuestra <a className={styles.privacyLink} href="https://sevargas.com/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</a>.
+        Al continuar, aceptas nuestra <a className={styles.privacyLink} href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</a>.
+        {" "}Si ya no quieres usar Ingesoft, puedes <a className={styles.privacyLink} href="/eliminar-cuenta" target="_blank" rel="noopener noreferrer">eliminar tu cuenta</a>.
       </p>
     </div>
   );
