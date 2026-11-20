@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AppShell } from "../../shell/AppShell";
 import { useStudentGradeEditViewModel } from "./hooks/useStudentGradeEditViewModel";
+import { formatGradeForInput, isGradeDirty } from "./gradePresentation";
 import { Avatar } from "../../common/Avatar";
 import { FullScreenImageViewer } from "../../posts/shared/FullScreenImageViewer";
 import { Routes } from "../../../routes/Routes";
@@ -22,9 +23,11 @@ export function StudentGradeEditScreen() {
     errors,
     dirtyCount,
     pendingCount,
+    totalUnsaved,
     hasErrors,
     saving,
     updateValue,
+    normalizeValue,
     saveHere,
     stageAndContinue,
     discard,
@@ -32,8 +35,6 @@ export function StudentGradeEditScreen() {
   const navigate = useNavigate();
 
   const [zoomedPhoto, setZoomedPhoto] = useState<ZoomedPhoto | null>(null);
-
-  const totalUnsaved = new Set([...Object.keys(draft), ...Object.keys(pendingForStudent)]).size;
 
   const handleContinue = () => {
     stageAndContinue();
@@ -153,24 +154,25 @@ export function StudentGradeEditScreen() {
 
               {hasErrors && (
                 <p role="alert" className={styles.errorText}>
-                  Revisa las celdas marcadas: las notas deben estar entre 0 y 5.
+                  Revisa las celdas marcadas: hay notas con un formato inválido.
                 </p>
               )}
 
               <ul className={styles.list}>
                 {uiState.items.map((item) => {
                   const original = uiState.grades[item.id];
-                  const pending = pendingForStudent[item.id];
                   const hasPending = item.id in pendingForStudent;
-                  const isEdited = item.id in draft || hasPending;
-                  let displayValue: string;
-                  if (item.id in draft) {
-                    displayValue = draft[item.id];
-                  } else if (hasPending) {
-                    displayValue = pending === null ? "" : String(pending);
-                  } else {
-                    displayValue = original !== undefined ? String(original) : "";
-                  }
+                  const baseline = hasPending ? pendingForStudent[item.id] : original;
+                  const draftValue = draft[item.id];
+                  const isEdited =
+                    hasPending ||
+                    (draftValue !== undefined && isGradeDirty(draftValue, baseline));
+                  const displayValue =
+                    draftValue !== undefined
+                      ? draftValue
+                      : typeof baseline === "number"
+                        ? formatGradeForInput(baseline)
+                        : "";
                   const error = errors[item.id];
                   return (
                     <li key={item.id} className={styles.row}>
@@ -182,6 +184,7 @@ export function StudentGradeEditScreen() {
                           className={`${styles.gradeInput} ${isEdited ? styles.gradeInputDirty : ""} ${error ? styles.gradeInputInvalid : ""}`}
                           value={displayValue}
                           onChange={(event) => updateValue(item.id, event.target.value)}
+                          onBlur={() => normalizeValue(item.id)}
                           aria-label={`Nota para ${item.name}`}
                           aria-invalid={error ? true : undefined}
                           title={error ?? "Vacía para eliminar la nota"}

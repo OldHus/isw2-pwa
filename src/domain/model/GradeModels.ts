@@ -1,6 +1,8 @@
 
+export const MIN_GRADE = 0;
+
 export type GradeError =
-  | { type: "invalidGrade"; min: number; max: number }
+  | { type: "invalidGrade"; min: number }
   | { type: "unknown"; message: string };
 
 export const GradeItemType = {
@@ -16,6 +18,7 @@ export interface GradeItem {
   weight: number;
   type: string;
   order: number;
+  createdAt: number | null;
 }
 
 export interface StudentGrades {

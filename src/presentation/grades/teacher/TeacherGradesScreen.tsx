@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { AppShell } from "../../shell/AppShell";
 import { useTeacherGradesViewModel } from "./hooks/useTeacherGradesViewModel";
+import { formatStudentDisplayName } from "./gradePresentation";
 import { AddGradeItemDialog } from "./AddGradeItemDialog";
 import { Avatar } from "../../common/Avatar";
 import { FullScreenImageViewer } from "../../posts/shared/FullScreenImageViewer";
@@ -154,7 +155,9 @@ export function TeacherGradesScreen() {
                           <StudentAvatar student={student} onZoom={setZoomedPhoto} />
                           <span className={styles.studentInfo}>
                             <span className={styles.studentNameRow}>
-                              <span className={styles.studentName}>{student.name || student.email}</span>
+                              <span className={styles.studentName}>
+                                {formatStudentDisplayName(student)}
+                              </span>
                               {pendingCount > 0 && (
                                 <span className={styles.pendingBadge} aria-label={`${pendingCount} cambios pendientes`}>
                                   {pendingCount} pendiente{pendingCount === 1 ? "" : "s"}
@@ -201,7 +204,7 @@ interface StudentAvatarProps {
 }
 
 function StudentAvatar({ student, onZoom }: StudentAvatarProps) {
-  const displayName = student.name || student.email;
+  const displayName = formatStudentDisplayName(student);
 
   if (!student.photoUrl) {
     return <Avatar photoUrl={student.photoUrl} role="estudiante" name={displayName} size={36} />;

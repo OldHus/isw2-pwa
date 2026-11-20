@@ -4,10 +4,41 @@ import { container } from "../../../../di/container";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import { removeStudent, stageStudentGrades } from "../../../../store/slices/gradesDraftSlice";
 import type { GradeCellUpdate } from "../../../../domain/model/GradeModels";
+import {
+  gradeInputError,
+  isGradeDirty,
+  normalizeGradeText,
+  parseGradeInput,
+  sortGradeItemsByCreationAsc,
+} from "../gradePresentation";
 import type { StudentGradeEditUiState } from "../StudentGradeEditUiState";
 
-function normalizeRaw(raw: string): string {
-  return raw.trim().replace(",", ".");
+type DraftState = Record<string, string>;
+
+function parseDraftToGrades(
+  source: DraftState,
+  serverGrades: Record<string, number>,
+  pendingForStudent: Record<string, number | null>
+): Record<string, number | null> {
+  const parsed: Record<string, number | null> = {};
+
+  for (const [itemId, raw] of Object.entries(source)) {
+    const baseline = itemId in pendingForStudent ? pendingForStudent[itemId] : serverGrades[itemId];
+    const grade = parseGradeInput(raw);
+
+    if (grade.status === "invalid") continue;
+
+    if (grade.status === "empty") {
+      if (typeof baseline !== "number") continue;
+      parsed[itemId] = null;
+      continue;
+    }
+
+    if (typeof baseline === "number" && grade.value === baseline) continue;
+    parsed[itemId] = grade.value;
+  }
+
+  return parsed;
 }
 
 export function useStudentGradeEditViewModel() {
@@ -19,7 +50,7 @@ export function useStudentGradeEditViewModel() {
   const dispatch = useAppDispatch();
   const [uiState, setUiState] = useState<StudentGradeEditUiState>({ status: "loading" });
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [draft, setDraft] = useState<Record<string, string>>({});
+  const [draft, setDraft] = useState<DraftState>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -55,7 +86,12 @@ export function useStudentGradeEditViewModel() {
       return;
     }
 
-    setUiState({ status: "success", student, items: itemsResult.data, grades: gradesResult.data.grades });
+    setUiState({
+      status: "success",
+      student,
+      items: sortGradeItemsByCreationAsc(itemsResult.data),
+      grades: gradesResult.data.grades,
+    });
     setDraft({});
     setErrors({});
   }, [session.courseId, studentUid]);
@@ -83,20 +119,11 @@ export function useStudentGradeEditViewModel() {
 
   const updateValue = useCallback(
     (itemId: string, raw: string) => {
+      const parsed = parseGradeInput(raw);
       const baseline = getBaseline(itemId);
-      const normalized = normalizeRaw(raw);
-
-      let isSameAsBaseline = false;
-      if (normalized === "") {
-        isSameAsBaseline = baseline === undefined || baseline === null;
-      } else {
-        const parsed = Number(normalized);
-        isSameAsBaseline =
-          typeof baseline === "number" && !Number.isNaN(parsed) && parsed === baseline;
-      }
 
       setDraft((current) => {
-        if (isSameAsBaseline) {
+        if (parsed.status === "empty" && (baseline === undefined || baseline === null)) {
           if (!(itemId in current)) return current;
           const next = { ...current };
           delete next[itemId];
@@ -105,34 +132,50 @@ export function useStudentGradeEditViewModel() {
         return { ...current, [itemId]: raw };
       });
 
-      if (isSameAsBaseline || normalized === "") {
-        setErrors((current) => {
+      const error = gradeInputError(parsed);
+      setErrors((current) => {
+        if (!error) {
           if (!(itemId in current)) return current;
           const next = { ...current };
           delete next[itemId];
           return next;
-        });
-        return;
-      }
-      const parsed = Number(normalized);
-      if (Number.isNaN(parsed)) {
-        setErrors((current) => ({ ...current, [itemId]: "Ingresa una nota válida" }));
-      } else if (parsed < 0 || parsed > 5) {
-        setErrors((current) => ({ ...current, [itemId]: "La nota debe estar entre 0 y 5" }));
-      } else {
-        setErrors((current) => {
-          if (!(itemId in current)) return current;
-          const next = { ...current };
-          delete next[itemId];
-          return next;
-        });
-      }
+        }
+        return { ...current, [itemId]: error };
+      });
     },
     [getBaseline]
   );
 
-  const dirtyCount = Object.keys(draft).length;
+  const normalizeValue = useCallback(
+    (itemId: string) => {
+      setDraft((current) => {
+        const raw = current[itemId];
+        if (raw === undefined) return current;
+
+        const parsed = parseGradeInput(raw);
+        if (parsed.status !== "valid") return current;
+
+        const baseline = getBaseline(itemId);
+        if (typeof baseline === "number" && parsed.value === baseline) {
+          const next = { ...current };
+          delete next[itemId];
+          return next;
+        }
+
+        const normalized = normalizeGradeText(raw);
+        if (normalized === null || normalized === raw) return current;
+        return { ...current, [itemId]: normalized };
+      });
+    },
+    [getBaseline]
+  );
+
+  const dirtyItemIds = Object.keys(draft).filter((itemId) =>
+    isGradeDirty(draft[itemId], getBaseline(itemId))
+  );
+  const dirtyCount = dirtyItemIds.length;
   const pendingCount = Object.keys(pendingForStudent).length;
+  const totalUnsaved = new Set([...dirtyItemIds, ...Object.keys(pendingForStudent)]).size;
   const hasErrors = Object.keys(errors).length > 0;
 
   const discard = useCallback(() => {
@@ -144,43 +187,33 @@ export function useStudentGradeEditViewModel() {
     setFeedback("Cambios descartados");
   }, [dispatch, studentUid]);
 
-  function parseDraftToGrades(
-    source: Record<string, string>,
-    serverGrades: Record<string, number>
-  ): Record<string, number | null> {
-    const parsed: Record<string, number | null> = {};
-    for (const [itemId, raw] of Object.entries(source)) {
-      const normalized = normalizeRaw(raw);
-      if (normalized === "") {
-        if (serverGrades[itemId] === undefined && !(itemId in pendingForStudent)) continue;
-        parsed[itemId] = null;
-      } else {
-        const value = Number(normalized);
-        if (Number.isNaN(value)) continue;
-        parsed[itemId] = value;
-      }
-    }
-    return parsed;
-  }
-
   const stageAndContinue = useCallback(() => {
     if (!studentUid || uiState.status !== "success") return 0;
     if (dirtyCount === 0 || hasErrors) return pendingCount;
-    const parsed = parseDraftToGrades(draft, uiState.grades);
+
+    const parsed = parseDraftToGrades(draft, uiState.grades, pendingForStudent);
     if (Object.keys(parsed).length > 0) {
       dispatch(stageStudentGrades({ studentUid, grades: parsed }));
     }
     setDraft({});
     setErrors({});
     return pendingCount + Object.keys(parsed).length;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [studentUid, uiState, draft, dirtyCount, hasErrors, pendingCount, dispatch]);
+  }, [
+    studentUid,
+    uiState,
+    draft,
+    dirtyCount,
+    hasErrors,
+    pendingCount,
+    pendingForStudent,
+    dispatch,
+  ]);
 
   const saveHere = useCallback(async () => {
     if (!session.courseId || !studentUid || uiState.status !== "success") return;
     if ((dirtyCount === 0 && pendingCount === 0) || hasErrors || saving) return;
 
-    const fromDraft = parseDraftToGrades(draft, uiState.grades);
+    const fromDraft = parseDraftToGrades(draft, uiState.grades, pendingForStudent);
     const merged: Record<string, number | null> = { ...pendingForStudent, ...fromDraft };
     const updates: GradeCellUpdate[] = Object.entries(merged).map(([itemId, grade]) => ({
       studentUid,
@@ -221,11 +254,10 @@ export function useStudentGradeEditViewModel() {
         updates.length === 1 ? "1 calificación guardada" : `${updates.length} calificaciones guardadas`
       );
     } else if (result.error.type === "invalidGrade") {
-      setFeedback(`Las notas deben estar entre ${result.error.min} y ${result.error.max}`);
+      setFeedback("La nota debe ser un número mayor o igual a 0");
     } else {
       setFeedback("No se pudieron guardar las calificaciones");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     session.courseId,
     studentUid,
@@ -247,9 +279,11 @@ export function useStudentGradeEditViewModel() {
     errors,
     dirtyCount,
     pendingCount,
+    totalUnsaved,
     hasErrors,
     saving,
     updateValue,
+    normalizeValue,
     saveHere,
     stageAndContinue,
     discard,

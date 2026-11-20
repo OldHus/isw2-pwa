@@ -3,13 +3,8 @@ import { container } from "../../../../di/container";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import { clearAllDrafts } from "../../../../store/slices/gradesDraftSlice";
 import type { GradeCellUpdate, GradeItemTypeValue } from "../../../../domain/model/GradeModels";
+import { sortGradeItemsByCreationAsc, sortStudentsBySurname } from "../gradePresentation";
 import type { TeacherGradesUiState } from "../TeacherGradesUiState";
-
-function sortStudents<T extends { name: string; email: string }>(students: T[]): T[] {
-  return [...students].sort((a, b) =>
-    (a.name || a.email).localeCompare(b.name || b.email, "es")
-  );
-}
 
 export function useTeacherGradesViewModel() {
   const session = useAppSelector((state) => state.session);
@@ -42,8 +37,8 @@ export function useTeacherGradesViewModel() {
 
     setUiState({
       status: "success",
-      items: itemsResult.data,
-      students: sortStudents(studentsResult.data),
+      items: sortGradeItemsByCreationAsc(itemsResult.data),
+      students: sortStudentsBySurname(studentsResult.data),
     });
   }, [session.courseId]);
 
@@ -162,7 +157,7 @@ export function useTeacherGradesViewModel() {
         updates.length === 1 ? "1 calificación guardada" : `${updates.length} calificaciones guardadas`
       );
     } else if (result.error.type === "invalidGrade") {
-      setFeedback(`Las notas deben estar entre ${result.error.min} y ${result.error.max}`);
+      setFeedback("La nota debe ser un número mayor o igual a 0");
     } else {
       setFeedback("No se pudieron guardar las calificaciones");
     }

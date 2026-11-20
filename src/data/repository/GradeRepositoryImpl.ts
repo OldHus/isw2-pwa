@@ -1,4 +1,5 @@
 import {
+  Timestamp,
   collection,
   deleteField,
   doc,
@@ -64,12 +65,14 @@ export class GradeRepositoryImpl implements GradeRepository {
 
       const items: GradeItem[] = snapshot.docs.map((itemDoc) => {
         const data = itemDoc.data();
+        const createdAt = data[CREATED_AT_FIELD];
         return {
           id: itemDoc.id,
           name: (data[NAME_FIELD] as string) ?? "",
           weight: (data[WEIGHT_FIELD] as number) ?? 0,
           type: (data[TYPE_FIELD] as string) ?? GradeItemType.DYNAMIC,
           order: (data[ORDER_FIELD] as number) ?? 0,
+          createdAt: createdAt instanceof Timestamp ? createdAt.toMillis() : null,
         };
       });
 
@@ -88,18 +91,33 @@ export class GradeRepositoryImpl implements GradeRepository {
   ): Promise<AppResult<GradeItem, GradeError>> {
     try {
       const itemsRef = collection(db, COURSES_COLLECTION, courseId, GRADE_ITEMS_SUBCOLLECTION);
-      const currentCount = (await getDocs(itemsRef)).size;
+      const snapshot = await getDocs(itemsRef);
+      let maxOrder = -1;
+      for (const itemDoc of snapshot.docs) {
+        const order = itemDoc.data()[ORDER_FIELD];
+        if (typeof order === "number" && Number.isFinite(order)) {
+          maxOrder = Math.max(maxOrder, order);
+        }
+      }
+      const nextOrder = maxOrder + 1;
       const newDocRef = doc(itemsRef);
 
       await setDoc(newDocRef, {
         [NAME_FIELD]: name,
         [WEIGHT_FIELD]: weight,
         [TYPE_FIELD]: type,
-        [ORDER_FIELD]: currentCount,
+        [ORDER_FIELD]: nextOrder,
         [CREATED_AT_FIELD]: serverTimestamp(),
       });
 
-      return success({ id: newDocRef.id, name, weight, type, order: currentCount });
+      return success({
+        id: newDocRef.id,
+        name,
+        weight,
+        type,
+        order: nextOrder,
+        createdAt: Date.now(),
+      });
     } catch (error) {
       this.crashReporter.recordException(error);
       return failure(unknownGradeError(error, "No se pudo crear el ítem de calificación"));

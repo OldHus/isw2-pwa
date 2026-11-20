@@ -2,18 +2,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AppShell } from "../../shell/AppShell";
 import { useGradesMatrixViewModel } from "./hooks/useGradesMatrixViewModel";
+import { formatGrade, formatStudentDisplayName, isGradeDirty } from "./gradePresentation";
 import { Avatar } from "../../common/Avatar";
 import { Routes, buildGradesStudentEditPath } from "../../../routes/Routes";
 import styles from "./GradesMatrixScreen.module.scss";
 
-const gradeFormatter = new Intl.NumberFormat("es-CO", {
-  minimumFractionDigits: 1,
-  maximumFractionDigits: 1,
-});
-
 export function GradesMatrixScreen() {
-  const { uiState, draft, errors, dirtyCount, hasErrors, saving, feedback, updateCell, saveAll, discard } =
-    useGradesMatrixViewModel();
+  const {
+    uiState,
+    draft,
+    errors,
+    dirtyCount,
+    hasErrors,
+    saving,
+    feedback,
+    updateCell,
+    normalizeCell,
+    saveAll,
+    discard,
+  } = useGradesMatrixViewModel();
   const navigate = useNavigate();
 
   return (
@@ -79,7 +86,7 @@ export function GradesMatrixScreen() {
 
               {hasErrors && (
                 <p role="alert" className={styles.errorText}>
-                  Revisa las celdas marcadas: las notas deben estar entre 0 y 5.
+                  Revisa las celdas marcadas: hay notas con un formato inválido.
                 </p>
               )}
 
@@ -99,6 +106,7 @@ export function GradesMatrixScreen() {
                     {uiState.students.map((student) => {
                       const studentGrades = uiState.grades[student.uid] ?? {};
                       const studentDraft = draft[student.uid] ?? {};
+                      const displayName = formatStudentDisplayName(student);
                       return (
                         <tr key={student.uid} className={styles.row}>
                           <th scope="row" className={styles.studentCell}>
@@ -111,21 +119,24 @@ export function GradesMatrixScreen() {
                                 <Avatar
                                   photoUrl={student.photoUrl}
                                   role="estudiante"
-                                  name={student.name || student.email}
+                                  name={displayName}
                                   size={28}
                                 />
-                                {student.name || student.email}
+                                {displayName}
                               </span>
                             </button>
                           </th>
                           {uiState.items.map((item) => {
                             const original = studentGrades[item.id];
-                            const isEdited = item.id in studentDraft;
-                            const displayValue = isEdited
-                              ? studentDraft[item.id]
-                              : original !== undefined
-                                ? gradeFormatter.format(original)
-                                : "";
+                            const draftValue = studentDraft[item.id];
+                            const isEdited =
+                              draftValue !== undefined && isGradeDirty(draftValue, original);
+                            const displayValue =
+                              draftValue !== undefined
+                                ? draftValue
+                                : original !== undefined
+                                  ? formatGrade(original)
+                                  : "";
                             const error = errors[`${student.uid}:${item.id}`];
                             return (
                               <td key={item.id} className={styles.gradeCell}>
@@ -136,7 +147,8 @@ export function GradesMatrixScreen() {
                                   value={displayValue}
                                   placeholder="—"
                                   onChange={(event) => updateCell(student.uid, item.id, event.target.value)}
-                                  aria-label={`Nota de ${student.name || student.email} en ${item.name}`}
+                                  onBlur={() => normalizeCell(student.uid, item.id)}
+                                  aria-label={`Nota de ${displayName} en ${item.name}`}
                                   aria-invalid={error ? true : undefined}
                                   title={error ?? undefined}
                                 />
